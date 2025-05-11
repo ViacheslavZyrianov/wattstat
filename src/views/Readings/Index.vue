@@ -60,7 +60,7 @@ onMounted(async () => {
       <van-tab
         v-for="(readingDataForYear, readingYear) in readingsStore.readings"
         :key="readingYear"
-        :title="readingYear"
+        :title="`${readingYear}`"
         :name="readingYear"
       >
         <div class="content">
