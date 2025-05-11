@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { computed, ComputedRef, PropType } from 'vue'
 import type { ReadingRead } from '@/store/readings/types'
 import ReadingItemContent from './Content.vue'
 import eventBus from '@/eventBus'
@@ -18,6 +18,12 @@ const props = defineProps({
     default: true,
   },
 })
+
+const title: ComputedRef<string> = computed(() =>
+  dayjs(props.data.date).isValid()
+    ? dayjs(props.data.date).format('MMMM')
+    : props.data.date,
+)
 
 const onEdit = () => {
   eventBus.emit('openActionSheetEditReading', props.data)
@@ -42,22 +48,42 @@ const onDelete = async () => {
 <template>
   <van-swipe-cell v-if="hasSwipeCell" :border="false">
     <template #default>
-      <reading-item-content :day="data.day" :night="data.night" />
+      <reading-item-content
+        :title="title"
+        :day="data.day"
+        :night="data.night"
+      />
     </template>
     <template #right>
-      <van-button
-        type="primary"
-        text="Edit"
-        style="height: 100%; margin-left: 8px"
-        @click="onEdit"
-      />
-      <van-button
-        type="danger"
-        text="Delete"
-        style="height: 100%; margin-left: 8px"
-        @click="onDelete"
-      />
+      <div class="swipe-action-buttons">
+        <van-button
+          type="primary"
+          text="Edit"
+          style="height: 100%; margin-left: 8px"
+          @click="onEdit"
+        />
+        <van-button
+          type="danger"
+          text="Delete"
+          style="height: 100%; margin-left: 8px"
+          @click="onDelete"
+        />
+      </div>
     </template>
   </van-swipe-cell>
-  <reading-item-content v-else :day="data.day" :night="data.night" />
+  <reading-item-content
+    v-else
+    :title="title"
+    :day="data.day"
+    :night="data.night"
+  />
 </template>
+
+<style scoped>
+.swipe-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+</style>
