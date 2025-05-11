@@ -23,6 +23,7 @@ section {
     border-radius: 8px;
     padding: 8px;
     background-color: var(--van-background-3);
+    --van-divider-margin: 8px 0;
 }
 
 label {
@@ -51,6 +52,10 @@ p {
     opacity: .75;
 }
 
+.van-theme-light {
+    --van-divider-border-color: #cccccc !important;
+}
+
 .van-theme-dark label,
 .van-theme-dark p,
 .van-theme-dark h1,
@@ -61,4 +66,8 @@ p {
 .van-theme-dark h6 {
     color: var(--van-white);
     opacity: .75;
+}
+
+.van-theme-dark {
+    --van-divider-border-color: #cccccc !important;
 }
