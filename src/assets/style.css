@@ -39,11 +39,26 @@ p {
     margin: 0 0 !important;
 }
 
-.van-theme-light label, p, h1, h2, h3, h4, h5, h {
+.van-theme-light label,
+.van-theme-light p,
+.van-theme-light h1,
+.van-theme-light h2,
+.van-theme-light h3,
+.van-theme-light h4,
+.van-theme-light h5,
+.van-theme-light h6 {
     color: var(--van-black);
+    opacity: .75;
 }
 
-.van-theme-dark label, p, h1, h2, h3, h4, h5, h {
+.van-theme-dark label,
+.van-theme-dark p,
+.van-theme-dark h1,
+.van-theme-dark h2,
+.van-theme-dark h3,
+.van-theme-dark h4,
+.van-theme-dark h5,
+.van-theme-dark h6 {
     color: var(--van-white);
     opacity: .75;
 }
