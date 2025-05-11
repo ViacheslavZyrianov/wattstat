@@ -1,0 +1,49 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overscroll-behavior: none;
+    background-color: var(--van-background-2);
+}
+
+main {
+    padding: 16px;
+    height: calc(100vh - (46px + 50px));
+    overflow: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+section {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    background-color: var(--van-background-3);
+}
+
+label {
+    font-size: 14px;
+    opacity: .75;
+}
+
+p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.van-tabs__nav--card {
+    margin: 0 0 !important;
+}
+
+.van-theme-light label, p, h1, h2, h3, h4, h5, h {
+    color: var(--van-black);
+}
+
+.van-theme-dark label, p, h1, h2, h3, h4, h5, h {
+    color: var(--van-white);
+    opacity: .75;
+}
