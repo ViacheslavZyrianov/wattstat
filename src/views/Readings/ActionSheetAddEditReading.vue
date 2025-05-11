@@ -9,17 +9,16 @@ import {
   Ref,
   watch,
 } from 'vue'
-import { ReadingForm } from '@/types/readings'
 import eventBus from '@/eventBus'
 import { useReadingsStore } from '@/store/readings'
-import { ReadingRead } from '@/store/readings/types'
+import { Reading, ReadingRead } from '@/store/readings/types'
 
 const readingsStore = useReadingsStore()
 
 const isActionSheetReadingOpen: Ref<boolean> = ref(false)
 const isButtonSubmitDisabled: Ref<boolean> = ref(false)
 const isButtonSubmitLoading: Ref<boolean> = ref(false)
-const form: Reactive<ReadingForm> = reactive({
+const form: Reactive<Reading> = reactive({
   day: '',
   night: '',
   date: new Date().toISOString().split('T')[0],
@@ -39,7 +38,7 @@ const rules = {
 }
 
 const basedOnMode: ComputedRef<
-  Record<'add' | 'edit', Record<string, unknown>>
+  Record<'add' | 'edit', { title: string; action: string }>
 > = computed(() => ({
   add: {
     title: 'Add Reading',
@@ -63,7 +62,7 @@ const onActionSheetAddReadingOpen = () => {
   resetForm()
 }
 
-const onActionSheetEditReadingOpen = (reading: ReadingRead) => {
+const onActionSheetEditReadingOpen = (reading: ReadingRead): void => {
   id.value = reading.id
   form.day = reading.day
   form.night = reading.night
@@ -109,8 +108,8 @@ watch(
 )
 
 onMounted(() => {
-  eventBus.on('openActionSheetAddReading', onActionSheetAddReadingOpen)
-  eventBus.on('openActionSheetEditReading', onActionSheetEditReadingOpen)
+  eventBus.on('openActionSheetAddReading', onActionSheetAddReadingOpen as any)
+  eventBus.on('openActionSheetEditReading', onActionSheetEditReadingOpen as any)
 })
 </script>
 
