@@ -12,23 +12,26 @@ const activeTabYear: Ref<string> = ref(
   dayjs().format('YYYY') || Object.keys(readingsStore.readings)[0],
 )
 
-const kWhTotal: ComputedRef<Pick<ReadingRead, 'day' | 'night'>> = computed(
-  () => {
-    let day = 0
-    let night = 0
+const kWhTotal: ComputedRef<ReadingRead> = computed(() => {
+  let day = 0
+  let night = 0
 
-    for (const year in readingsStore.readings) {
-      if (Array.isArray(readingsStore.readings[year])) {
-        for (const entry of readingsStore.readings[year]) {
-          day += Number(entry.day)
-          night += Number(entry.night)
-        }
+  for (const year in readingsStore.readings) {
+    if (Array.isArray(readingsStore.readings[year])) {
+      for (const entry of readingsStore.readings[year]) {
+        day += Number(entry.day)
+        night += Number(entry.night)
       }
     }
+  }
 
-    return { day, night }
-  },
-)
+  return {
+    id: 0,
+    day: day.toString(),
+    night: night.toString(),
+    date: 'Total',
+  }
+})
 
 const isReadingsNotEmpty: ComputedRef<boolean> = computed(
   () => Object.keys(readingsStore.readings).length > 0,
@@ -80,7 +83,7 @@ onMounted(async () => {
 
 <style scoped>
 .content {
-  height: calc(100vh - 230px);
+  height: calc(100vh - 266px);
   overflow: auto;
 }
 </style>
