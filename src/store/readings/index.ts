@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
 import axios from '@/axios'
-import { ReadingForm } from '@/types/readings'
-import { ReadingRead } from '@/store/readings/types'
+import { ReadingCreate, ReadingState } from '@/store/readings/types'
 
 export const useReadingsStore = defineStore('readings', {
-  state: () => ({
-    readings: [] as ReadingRead[],
+  state: (): ReadingState => ({
+    readings: {},
   }),
   actions: {
     async fetchReadings(): Promise<void> {
@@ -17,14 +16,17 @@ export const useReadingsStore = defineStore('readings', {
         console.error('Error during fetching readings:', error)
       }
     },
-    async postReading(reading: ReadingForm): Promise<void> {
+    async postReading(reading: ReadingCreate): Promise<void> {
       try {
         await axios.post('readings', reading)
       } catch (error) {
         console.error('Error during posting reading:', error)
       }
     },
-    async patchReading(id: number | null, reading: ReadingForm): Promise<void> {
+    async patchReading(
+      id: number | null,
+      reading: Partial<ReadingCreate>,
+    ): Promise<void> {
       try {
         await axios.patch(`readings/${id}`, reading)
       } catch (error) {
