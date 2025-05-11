@@ -1,9 +1,10 @@
-export type ReadingCreate = {
+export type Reading = {
   day: string
   night: string
   date: string
-  created_at: string
 }
+
+export type ReadingCreate = Reading
 
 export type ReadingRead = ReadingCreate & {
   id: number
