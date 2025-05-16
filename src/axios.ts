@@ -1,5 +1,6 @@
 // axios.js
 import axios from 'axios'
+import { showNotify } from 'vant'
 
 // Create an Axios instance
 const axiosInstance = axios.create({
@@ -11,7 +12,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 })
 
-// // Request interceptor
+// Request interceptor
 // axiosInstance.interceptors.request.use(
 //   (config) => {
 //     // Add auth token if available
@@ -23,18 +24,18 @@ const axiosInstance = axios.create({
 //   },
 //   (error) => Promise.reject(error),
 // )
-//
-// // Response interceptor
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     // Handle global errors
-//     if (error.response && error.response.status === 401) {
-//       console.warn('Unauthorized! Redirecting to login...')
-//       // Optionally redirect to login page
-//     }
-//     return Promise.reject(error)
-//   },
-// )
+
+// Response interceptor
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    showNotify({
+      message: error,
+      background: '#ee0a24',
+      duration: 2000,
+    })
+    return Promise.reject(error)
+  },
+)
 
 export default axiosInstance
