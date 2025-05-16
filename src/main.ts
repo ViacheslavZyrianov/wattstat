@@ -6,6 +6,7 @@ import router from './router'
 import { registerSW } from 'virtual:pwa-register'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import './assets/vant.css'
 import './assets/style.css'
 
 registerSW({
