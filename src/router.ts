@@ -10,6 +10,7 @@ const routes = [
   {
     path: '/auth',
     name: 'Auth',
+    meta: { layout: 'AuthLayout' },
     component: () => import('@/views/Auth/Index.vue'),
   },
   {
@@ -32,6 +33,12 @@ const routes = [
     name: 'Settings',
     component: () => import('@/views/Settings/Index.vue'),
   },
+  {
+    path: '/privacy-policy',
+    name: 'PrivacyPolicy',
+    meta: { layout: 'FullPageLayout' },
+    component: () => import('@/views/PrivacyPolicy/Index.vue'),
+  },
 ]
 
 const router = createRouter({
@@ -41,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const publicRoutes = ['/auth']
+  const publicRoutes = ['/auth', '/privacy-policy']
   const isPublicRoute = publicRoutes.includes(to.path)
 
   // Wait for authentication check to complete
