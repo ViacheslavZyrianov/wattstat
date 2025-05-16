@@ -5,6 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    meta: { layout: 'CenteredLayout' },
     component: () => import('@/views/Home/Index.vue'),
   },
   {
