@@ -8,6 +8,7 @@ import ReadingItem from './Item/Index.vue'
 const readingsStore = useReadingsStore()
 
 const isReady: Ref<boolean> = ref(false)
+const isLoading: Ref<boolean> = ref(false)
 const activeTabYear: Ref<string> = ref(
   dayjs().format('YYYY') || Object.keys(readingsStore.readings)[0],
 )
@@ -37,8 +38,14 @@ const isReadingsNotEmpty: ComputedRef<boolean> = computed(
   () => Object.keys(readingsStore.readings).length > 0,
 )
 
-onMounted(async () => {
+const fetchReadings = async () => {
+  isLoading.value = true
   await readingsStore.fetchReadings()
+  isLoading.value = false
+}
+
+onMounted(async () => {
+  await fetchReadings()
   isReady.value = true
 })
 </script>
@@ -50,7 +57,6 @@ onMounted(async () => {
       style="margin-bottom: 16px"
       :has-swipe-cell="false"
     />
-
     <van-tabs
       v-if="isReadingsNotEmpty"
       v-model:active="activeTabYear"
@@ -63,14 +69,22 @@ onMounted(async () => {
         :title="`${readingYear}`"
         :name="readingYear"
       >
-        <div class="content">
-          <reading-item
-            v-for="readingDataForYearItem in readingDataForYear"
-            :key="readingDataForYearItem.id"
-            :data="readingDataForYearItem"
-            style="margin-top: 16px"
-          />
-        </div>
+        <van-pull-refresh
+          v-model="isLoading"
+          loading-text="Updating readings..."
+          pulling-text="Pull to refresh"
+          loosing-text="Pull to refresh"
+          @refresh="fetchReadings"
+        >
+          <div class="content">
+            <reading-item
+              v-for="readingDataForYearItem in readingDataForYear"
+              :key="readingDataForYearItem.id"
+              :data="readingDataForYearItem"
+              style="margin-top: 16px"
+            />
+          </div>
+        </van-pull-refresh>
       </van-tab>
     </van-tabs>
     <h3 v-else>
