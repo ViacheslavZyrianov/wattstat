@@ -2,7 +2,7 @@
 import { computed, ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import AuthLayout from '@/layouts/AuthLayout.vue'
+import CenteredLayout from '@/layouts/CenteredLayout.vue'
 import FullPageLayout from '@/layouts/FullPageLayout.vue'
 import { useUIStore } from '@/store/ui'
 
@@ -13,8 +13,8 @@ const layout: ComputedRef<unknown> = computed(() => {
   switch (route.meta.layout) {
     case 'FullPageLayout':
       return FullPageLayout
-    case 'AuthLayout':
-      return AuthLayout
+    case 'CenteredLayout':
+      return CenteredLayout
     default:
       return DefaultLayout
   }

@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/auth',
     name: 'Auth',
-    meta: { layout: 'AuthLayout' },
+    meta: { layout: 'CenteredLayout' },
     component: () => import('@/views/Auth/Index.vue'),
   },
   {
