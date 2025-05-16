@@ -33,47 +33,30 @@ onMounted(async () => {
 
 <!-- src/components/LoginPage.vue -->
 <template>
-  <div class="login-container">
-    <h2>Sign in to your account</h2>
+  <section class="login-container">
+    <h2 style="margin-bottom: 32px">Sign in to your account</h2>
 
-    <div v-if="authStore.getIsLoading">Loading authentication...</div>
-
-    <div v-else>
-      <!-- Regular sign-in button will be rendered here by Google -->
-      <button @click="handleManualSignIn" class="manual-signin-btn">
-        Sign in with Google
-      </button>
-
-      <div v-if="authStore.error" class="error-message">
-        {{ authStore.error }}
-      </div>
-    </div>
-  </div>
+    <!-- Regular sign-in button will be rendered here by Google -->
+    <van-button
+      :loading="authStore.getIsLoading"
+      :disabled="authStore.getIsLoading"
+      type="primary"
+      block
+      @click="handleManualSignIn"
+    >
+      Sign in with Google
+    </van-button>
+  </section>
 </template>
 
 <style scoped>
 .login-container {
   max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
+  padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.manual-signin-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
 }
 
 .error-message {
   color: #d93025;
-  margin-top: 15px;
 }
 </style>
