@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, watch } from 'vue'
 import { useAuthStore } from '@/store/auth/index.js'
+import { showNotify } from 'vant'
 
 const authStore = useAuthStore()
 
@@ -26,7 +27,11 @@ onMounted(async () => {
     await authStore.initGoogleAuth()
     authStore.setupGoogleSignIn()
   } catch (error) {
-    console.error('Failed to initialize Google auth:', error)
+    showNotify({
+      message: `Failed to initialize Google auth: ${error}`,
+      background: '#ee0a24',
+      duration: 2000,
+    })
   }
 })
 </script>
@@ -54,9 +59,5 @@ onMounted(async () => {
   max-width: 400px;
   padding: 16px;
   border-radius: 8px;
-}
-
-.error-message {
-  color: #d93025;
 }
 </style>
