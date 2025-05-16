@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import axios from '@/axios'
+import { showNotify } from 'vant'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     isLoading: false,
-    error: null,
   }),
 
   getters: {
@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
 
     async handleGoogleResponse(response) {
       if (!response.credential) {
-        this.error = 'No credential received'
+        showNotify({ type: 'danger', message: 'No credential received' })
         return
       }
 
@@ -60,13 +60,18 @@ export const useAuthStore = defineStore('auth', {
 
         if (data.authenticated) {
           this.user = data.user
-          this.error = null
         } else {
-          this.error = data.error || 'Authentication failed'
+          showNotify({
+            type: 'danger',
+            message: data.error || 'Authentication failed',
+          })
           this.user = null
         }
       } catch (err) {
-        this.error = err.response?.data?.message || err.message
+        showNotify({
+          type: 'danger',
+          message: err.response?.data?.message || err.message,
+        })
         this.user = null
       } finally {
         this.isLoading = false
@@ -90,7 +95,10 @@ export const useAuthStore = defineStore('auth', {
           this.user = null
         }
       } catch (err) {
-        this.error = err.response?.data?.message || err.message
+        showNotify({
+          type: 'danger',
+          message: err.response?.data?.message || err.message,
+        })
         this.user = null
       } finally {
         this.isLoading = false
@@ -105,10 +113,12 @@ export const useAuthStore = defineStore('auth', {
 
         if (data.success) {
           this.user = null
-          this.error = null
         }
       } catch (err) {
-        this.error = err.response?.data?.message || err.message
+        showNotify({
+          type: 'danger',
+          message: err.response?.data?.message || err.message,
+        })
       } finally {
         this.isLoading = false
       }
