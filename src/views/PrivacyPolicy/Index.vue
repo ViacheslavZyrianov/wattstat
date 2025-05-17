@@ -2,7 +2,7 @@
 
 <template>
   <h1>Privacy Policy</h1>
-  <p><strong>Effective Date:</strong> [Insert Date]</p>
+  <p><strong>Effective Date:</strong> May 17, 2025</p>
 
   <p>
     At <strong>WattStat</strong> ("we", "us", or "our"), accessible from
