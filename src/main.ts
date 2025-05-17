@@ -27,10 +27,11 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 
 // Initialize auth status before mounting the app
-const initApp = async () => {
+const initApp = () => {
   const authStore = useAuthStore()
-  await authStore.checkAuthStatus()
-  app.mount('#app')
+  authStore.checkAuthStatus().then(() => {
+    app.mount('#app')
+  })
 }
 
-await initApp()
+initApp()
