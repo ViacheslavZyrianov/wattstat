@@ -29,11 +29,17 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    showNotify({
-      message: error,
-      background: '#ee0a24',
-      duration: 2000,
-    })
+    const apiUrl = error.config?.url || 'Unknown URL'
+    const noErrorApiUrls = ['/auth/status']
+
+    if (!noErrorApiUrls.includes(apiUrl)) {
+      showNotify({
+        message: `ERROR: ${error.message}\nURL: ${apiUrl}`,
+        background: '#ee0a24',
+        duration: 2000,
+      })
+    }
+
     return Promise.reject(error)
   },
 )
