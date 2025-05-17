@@ -40,6 +40,12 @@ const routes = [
     meta: { layout: 'FullPageLayout' },
     component: () => import('@/views/PrivacyPolicy/Index.vue'),
   },
+  {
+    path: '/terms-of-service',
+    name: 'TermsOfService',
+    meta: { layout: 'FullPageLayout' },
+    component: () => import('@/views/TermsOfService/Index.vue'),
+  },
 ]
 
 const router = createRouter({
@@ -49,7 +55,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const publicRoutes = ['/auth', '/privacy-policy']
+  const publicRoutes = ['/auth', '/privacy-policy', '/terms-of-service']
   const isPublicRoute = publicRoutes.includes(to.path)
 
   // Wait for authentication check to complete
