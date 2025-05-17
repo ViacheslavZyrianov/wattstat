@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
       googleAuthUrl.searchParams.append('prompt', 'select_account')
 
       // Redirect to Google Auth
-      window.location.href = googleAuthUrl.toString()
+      window.open(googleAuthUrl.toString())
     },
 
     async handleGoogleResponse(code) {
