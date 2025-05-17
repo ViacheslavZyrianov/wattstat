@@ -31,7 +31,7 @@ export default defineConfig({
         name: 'WattStat',
         short_name: 'WattStat',
         start_url: '/',
-        display: 'fullscreen',
+        display: 'browser',
         orientation: 'portrait',
         background_color: '#ffffff',
         theme_color: '#42b883',
