@@ -1,4 +1,4 @@
-name: Bump Patch Version on Merge
+name: Bump Patch Version on Merge to Main
 
 on:
   push:
@@ -8,42 +8,49 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Bump patch version and push tag
-        id: bump_version
+      - name: Bump patch version, commit and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Read current version
           CURRENT_VERSION=$(jq -r .version package.json)
           echo "Current version: $CURRENT_VERSION"
-          
-          # Split version into components
+
+          # Split version into major, minor, patch
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
-          
-          # Increment patch
+
+          # Increment patch number
           PATCH=$((PATCH + 1))
-          
+
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "New version: $NEW_VERSION"
-          
+
           # Update package.json version
           jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.tmp.json
           mv package.tmp.json package.json
-          
-          # Commit and push changes
+
+          # Configure git user
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Commit the updated package.json with skip ci to avoid loop
           git add package.json
           git commit -m "chore: bump patch version to $NEW_VERSION [skip ci]"
+
+          # Create tag
           git tag "v$NEW_VERSION"
+
+          # Push commit and tags back to main
           git push origin main --tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
