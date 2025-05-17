@@ -7,9 +7,6 @@ html, body {
     padding: 0;
     height: 100%;
     overflow: hidden;
-    overscroll-behavior: none;
-    touch-action: none;
-    -webkit-overflow-scrolling: auto;
 }
 
 :root {
@@ -19,7 +16,6 @@ html, body {
 body {
     overscroll-behavior: none;
     background-color: var(--van-background-2);
-    height: calc(var(--vh, 1vh) * 100);
 }
 
 main {
