@@ -1,7 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/store/auth'
-
-const routes = [
+export default [
   {
     path: '/',
     name: 'Home',
@@ -53,46 +50,3 @@ const routes = [
     component: () => import('@/views/TermsOfService/Index.vue'),
   },
 ]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
-
-router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  const publicRoutes = [
-    '/auth',
-    '/auth/google-callback',
-    '/privacy-policy',
-    '/terms-of-service',
-  ]
-  const isPublicRoute = publicRoutes.includes(to.path)
-
-  // Wait for authentication check to complete
-  await authStore.checkAuthStatus()
-
-  // Public route - accessible to everyone
-  if (isPublicRoute) {
-    // If user is already authenticated and tries to access auth page,
-    // redirect to dashboard (or home)
-    if (authStore.getIsAuthenticated) {
-      next({ name: 'Dashboard' })
-    } else {
-      // Allow access to public route for non-authenticated users
-      next()
-    }
-  }
-  // Protected route - requires authentication
-  else {
-    if (authStore.getIsAuthenticated) {
-      // User is authenticated, allow access
-      next()
-    } else {
-      // Not authenticated, redirect to auth page
-      next({ name: 'Auth' })
-    }
-  }
-})
-
-export default router
