@@ -15,8 +15,8 @@ const onLogout = async (): Promise<void> => {
     confirmButtonType: 'danger',
   })
 
-  eventBus.on('confirm', () => {
-    authStore.logout()
+  eventBus.on('confirm', async () => {
+    await authStore.logout()
     router.push('/auth')
   })
 }
