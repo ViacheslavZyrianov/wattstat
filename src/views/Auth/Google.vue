@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch } from 'vue'
+import { watch } from 'vue'
 import { useAuthStore } from '@/store/auth/index.js'
 import { showNotify } from 'vant'
 
@@ -8,21 +8,7 @@ const authStore = useAuthStore()
 const emit = defineEmits(['onAuth'])
 
 // Handle manual sign-in click
-const handleManualSignIn = () => {
-  authStore.showOneTapPrompt()
-}
-
-watch(
-  () => authStore.getIsAuthenticated,
-  () => {
-    if (authStore.getIsAuthenticated) {
-      emit('onAuth')
-    }
-  },
-)
-
-// Initialize Google auth when component mounts
-onMounted(async () => {
+const handleManualSignIn = async () => {
   try {
     await authStore.initGoogleAuth()
     authStore.setupGoogleSignIn()
@@ -33,7 +19,16 @@ onMounted(async () => {
       duration: 2000,
     })
   }
-})
+}
+
+watch(
+  () => authStore.getIsAuthenticated,
+  () => {
+    if (authStore.getIsAuthenticated) {
+      emit('onAuth')
+    }
+  },
+)
 </script>
 
 <!-- src/components/LoginPage.vue -->
