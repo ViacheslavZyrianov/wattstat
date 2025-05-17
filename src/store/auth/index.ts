@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from '@/axios'
 import { showNotify } from 'vant'
+import router from '@/router' // Import router instance directly=
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -37,35 +38,61 @@ export const useAuthStore = defineStore('auth', {
     setupGoogleSignIn() {
       if (!window.google) return
 
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: this.handleGoogleResponse.bind(this),
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      })
+      const currentUrl = window.location.origin
+      const redirectUri = `${currentUrl}/auth/google-callback`
+
+      // Store the return URL to redirect after authentication
+      const returnUrl =
+        router.currentRoute.value.query.returnUrl || '/dashboard'
+      localStorage.setItem('authReturnUrl', returnUrl.toString())
+
+      // Create the Google OAuth URL with redirect parameters
+      const googleAuthUrl = new URL(
+        'https://accounts.google.com/o/oauth2/v2/auth',
+      )
+      googleAuthUrl.searchParams.append(
+        'client_id',
+        import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      )
+      googleAuthUrl.searchParams.append('redirect_uri', redirectUri)
+      googleAuthUrl.searchParams.append('response_type', 'code')
+      googleAuthUrl.searchParams.append('scope', 'email profile')
+      googleAuthUrl.searchParams.append('prompt', 'select_account')
+
+      // Redirect to Google Auth
+      window.location.href = googleAuthUrl.toString()
     },
 
-    async handleGoogleResponse(response) {
-      if (!response.credential) {
-        showNotify({ type: 'danger', message: 'No credential received' })
-        return
+    async handleGoogleResponse(code) {
+      if (!code) {
+        showNotify({
+          type: 'danger',
+          message: 'No authentication code received',
+        })
+        return false
       }
 
       this.isLoading = true
 
       try {
-        const { data } = await axios.post('/auth/google/verify-token', {
-          token: response.credential,
+        const currentUrl = window.location.origin
+        const redirectUri = `${currentUrl}/auth/google-callback`
+
+        const { data } = await axios.post('/auth/google-callback', {
+          code,
+          redirectUri,
         })
 
         if (data.authenticated) {
           this.user = data.user
+          return true
         } else {
           showNotify({
             type: 'danger',
             message: data.error || 'Authentication failed',
           })
           this.user = null
+          return false
         }
       } catch (err) {
         showNotify({
@@ -73,14 +100,10 @@ export const useAuthStore = defineStore('auth', {
           message: err.response?.data?.message || err.message,
         })
         this.user = null
+        return false
       } finally {
         this.isLoading = false
       }
-    },
-
-    showOneTapPrompt() {
-      if (!window.google) return
-      window.google.accounts.id.prompt()
     },
 
     async checkAuthStatus() {

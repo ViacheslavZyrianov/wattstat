@@ -15,6 +15,12 @@ const routes = [
     component: () => import('@/views/Auth/Index.vue'),
   },
   {
+    path: '/auth/google-callback',
+    name: 'GoogleCallback',
+    meta: { layout: 'CenteredLayout' },
+    component: () => import('@/views/Auth/GoogleCallback.vue'),
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/Dashboard/Index.vue'),
@@ -55,7 +61,12 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const publicRoutes = ['/auth', '/privacy-policy', '/terms-of-service']
+  const publicRoutes = [
+    '/auth',
+    '/auth/google-callback',
+    '/privacy-policy',
+    '/terms-of-service',
+  ]
   const isPublicRoute = publicRoutes.includes(to.path)
 
   // Wait for authentication check to complete
