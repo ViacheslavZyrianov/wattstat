@@ -95,10 +95,6 @@ export const useAuthStore = defineStore('auth', {
           return false
         }
       } catch (err) {
-        showNotify({
-          type: 'danger',
-          message: err.response?.data?.message || err.message,
-        })
         this.user = null
         return false
       } finally {
@@ -133,11 +129,6 @@ export const useAuthStore = defineStore('auth', {
         if (data.success) {
           this.user = null
         }
-      } catch (err) {
-        showNotify({
-          type: 'danger',
-          message: err.response?.data?.message || err.message,
-        })
       } finally {
         this.isLoading = false
       }
