@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Google from '@/views/Auth/Google.vue'
+import Google from './Google.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
