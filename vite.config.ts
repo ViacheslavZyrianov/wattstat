@@ -7,6 +7,7 @@ import { VantResolver } from '@vant/auto-import-resolver'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
+import pkg from './package.json'
 
 // ⬇️ Get __dirname equivalent in ESM
 const __filename = fileURLToPath(import.meta.url)
@@ -17,6 +18,9 @@ const iconsPath = path.resolve(__dirname, 'public/icons/icons.json')
 const icons = JSON.parse(fs.readFileSync(iconsPath, 'utf-8')).icons
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
