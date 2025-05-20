@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ComputedRef, ref } from 'vue'
+import { computed, ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import CenteredLayout from '@/layouts/CenteredLayout.vue'
@@ -8,8 +8,6 @@ import { useUIStore } from '@/store/ui'
 
 const route = useRoute()
 const uiStore = useUIStore()
-
-const version = ref(__APP_VERSION__)
 
 const layout: ComputedRef<unknown> = computed(() => {
   switch (route.meta.layout) {
@@ -24,13 +22,6 @@ const layout: ComputedRef<unknown> = computed(() => {
 </script>
 
 <template>
-  <van-tag
-    round
-    type="warning"
-    style="position: fixed; top: 0; left: 0; z-index: 1000"
-  >
-    {{ version }}
-  </van-tag>
   <van-config-provider :theme="uiStore.getTheme" />
   <component :is="layout">
     <router-view />
