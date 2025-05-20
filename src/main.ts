@@ -8,7 +8,6 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import './assets/vant.css'
 import './assets/style.css'
-import { useAuthStore } from '@/store/auth'
 
 registerSW({
   onNeedRefresh() {
@@ -26,12 +25,4 @@ app.use(router)
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 
-// Initialize auth status before mounting the app
-const initApp = () => {
-  const authStore = useAuthStore()
-  authStore.checkAuthStatus().then(() => {
-    app.mount('#app')
-  })
-}
-
-initApp()
+app.mount('#app')

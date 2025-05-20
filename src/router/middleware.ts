@@ -17,6 +17,8 @@ export default {
     const authStore = useAuthStore()
     const isPublicRoute = publicRoutes.includes(to.path)
 
+    await authStore.checkAuthStatus()
+
     // Public route - accessible to everyone
     if (isPublicRoute) {
       // If user is already authenticated and tries to access auth page,
