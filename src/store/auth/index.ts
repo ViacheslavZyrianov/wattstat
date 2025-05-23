@@ -64,7 +64,7 @@ export const useAuthStore = defineStore('auth', {
       window.location.href = googleAuthUrl.toString()
     },
 
-    async handleGoogleResponse(code: string) {
+    async handleGoogleResponse(code: string): Promise<boolean> {
       if (!code) {
         showNotify({
           type: 'danger',
