@@ -1,9 +1,6 @@
-import { NotifyType, showNotify } from 'vant'
+import { NotifyOptions, showNotify } from 'vant'
 import eventBus from '@/eventBus'
 
-eventBus.on('notify', (message: string, type: NotifyType) => {
-  showNotify({
-    type,
-    message,
-  })
+eventBus.on('notify', (options) => {
+  showNotify(options as NotifyOptions)
 })
