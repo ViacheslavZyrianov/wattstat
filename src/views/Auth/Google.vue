@@ -35,6 +35,11 @@ watch(
 <template>
   <section class="login-container">
     <h2 style="margin-bottom: 32px">Sign in to your account</h2>
+    <h5>authStore.getIsAuthenticated = {{ authStore.getIsAuthenticated }}</h5>
+    <h5>authStore.user</h5>
+    <pre>{{ authStore.user }}</pre>
+    <h5>authStore.getUser</h5>
+    <pre>{{ authStore.getUser }}</pre>
     <van-button
       :loading="authStore.getIsLoading"
       :disabled="authStore.getIsLoading"
