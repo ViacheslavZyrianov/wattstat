@@ -1,3 +1,5 @@
-import mitt from 'mitt'
+import mitt, { EventType } from 'mitt'
 
-export default mitt()
+const emitter = mitt<Record<EventType, unknown>>()
+
+export default emitter
