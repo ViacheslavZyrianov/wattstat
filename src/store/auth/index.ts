@@ -22,7 +22,7 @@ export const useAuthStore = defineStore('auth', {
         return
       }
 
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const script = document.createElement('script')
         script.id = 'google-auth'
         script.src = 'https://accounts.google.com/gsi/client'
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     setupGoogleSignIn() {
-      if (!window.google) return
+      if (!(window as any).google) return
 
       const currentUrl = window.location.origin
       const redirectUri = `${currentUrl}/auth/google-callback`
@@ -59,11 +59,11 @@ export const useAuthStore = defineStore('auth', {
       googleAuthUrl.searchParams.append('scope', 'email profile')
       googleAuthUrl.searchParams.append('prompt', 'select_account')
 
-      // Redirect to Google Auth
-      window.open(googleAuthUrl.toString(), '_blank', 'noopener,noreferrer')
+      // Redirect in the same tab
+      window.location.href = googleAuthUrl.toString()
     },
 
-    async handleGoogleResponse(code) {
+    async handleGoogleResponse(code: string) {
       if (!code) {
         showNotify({
           type: 'danger',
@@ -85,6 +85,10 @@ export const useAuthStore = defineStore('auth', {
 
         if (data.authenticated) {
           this.user = data.user
+          // Close the popup window if we're in it
+          if (localStorage.getItem('authPopupWindow')) {
+            window.close()
+          }
           return true
         } else {
           showNotify({
