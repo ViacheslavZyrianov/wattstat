@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TabBar from '@/App/components/TabBar/Index.vue'
-import DialogConfirm from '@/App/components/DialogConfirm/Index.vue'
+import DialogConfirm from '@/components/DialogConfirm/Index.vue'
 import { useAuthStore } from '@/store/auth'
 import { useRoute } from 'vue-router'
 import { computed, ComputedRef } from 'vue'
