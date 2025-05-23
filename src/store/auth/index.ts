@@ -1,18 +1,19 @@
 import { defineStore } from 'pinia'
 import axios from '@/axios'
 import { showNotify } from 'vant'
-import router from '@/router' // Import router instance directly=
+import router from '@/router'
+import { AuthState, User } from '@/store/auth/types' // Import router instance directly=
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
+  state: (): AuthState => ({
     user: null,
     isLoading: false,
   }),
 
   getters: {
-    getUser: (state) => state.user,
-    getIsLoading: (state) => state.isLoading,
-    getIsAuthenticated: (state) => !!state.user,
+    getUser: (state): User | null => state.user,
+    getIsLoading: (state): boolean => state.isLoading,
+    getIsAuthenticated: (state): boolean => !!state.user,
   },
 
   actions: {
