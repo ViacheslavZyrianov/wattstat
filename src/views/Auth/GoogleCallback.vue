@@ -1,29 +1,35 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref, Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
+import { showNotify } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-onMounted(async () => {
-  const code = route.query.code as string
+const isSuccessAuth: Ref<boolean> = ref(false)
 
-  if (code) {
-    const success = await authStore.handleGoogleResponse(code)
+const handleGoogleResponse = async () => {
+  try {
+    isSuccessAuth.value = await authStore.handleGoogleResponse(
+      `${route.query.code}`,
+    )
 
-    if (success) {
-      const returnUrl = localStorage.getItem('authReturnUrl') || '/dashboard'
-      router.replace(returnUrl)
-    } else {
-      router.replace('/auth')
-    }
-  } else {
-    router.replace('/auth')
+    await router.replace(localStorage.getItem('authReturnUrl') || '/auth')
+
+    localStorage.removeItem('authReturnUrl')
+  } catch (error) {
+    showNotify({
+      type: 'danger',
+      message: `${error}`,
+      duration: 5000,
+    })
   }
+}
 
-  localStorage.removeItem('authReturnUrl')
+onMounted(async () => {
+  await handleGoogleResponse()
 })
 </script>
 
