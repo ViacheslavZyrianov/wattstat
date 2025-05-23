@@ -35,8 +35,6 @@ watch(
 <template>
   <section class="login-container">
     <h2 style="margin-bottom: 32px">Sign in to your account</h2>
-
-    <!-- Regular sign-in button will be rendered here by Google -->
     <van-button
       :loading="authStore.getIsLoading"
       :disabled="authStore.getIsLoading"
