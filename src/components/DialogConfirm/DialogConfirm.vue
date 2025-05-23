@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
           </van-button>
         </van-col>
         <van-col span="12">
-          <van-button block size="small" @click="onConfirm">
+          <van-button block size="small" type="danger" @click="onConfirm">
             {{ options.confirmButtonText }}
           </van-button>
         </van-col>
