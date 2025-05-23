@@ -8,7 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    DialogConfirm: typeof import('@/components/DialogConfirm/DialogConfirm.vue')['default']
+    DialogConfirm: typeof import('./src/components/DialogConfirm/DialogConfirm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VanActionSheet: typeof import('vant/es')['ActionSheet']
