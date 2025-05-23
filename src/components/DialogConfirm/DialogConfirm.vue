@@ -8,10 +8,8 @@ const options: Reactive<DialogOptions> = reactive({
   title: 'Title',
   message: 'Message',
   confirmButtonText: 'Confirm',
-  confirmButtonType: 'primary',
   confirmButtonColor: 'primary',
   cancelButtonText: 'Cancel',
-  cancelButtonType: 'default',
   cancelButtonColor: '#00f',
 })
 
@@ -26,7 +24,8 @@ const onCancel = (): void => {
 }
 
 onMounted(() => {
-  eventBus.on('showDialogConfirm', (dialogOptions: DialogOptions) => {
+  eventBus.on('showDialogConfirm', (event) => {
+    const dialogOptions = event as DialogOptions
     isOpen.value = true
     Object.assign(options, dialogOptions)
   })
@@ -50,23 +49,12 @@ onBeforeUnmount(() => {
     <template #footer>
       <van-row class="dialog-confirm-footer" gutter="16">
         <van-col span="12">
-          <van-button
-            :type="options.cancelButtonType"
-            block
-            plain
-            size="small"
-            @click="onCancel"
-          >
+          <van-button block plain size="small" @click="onCancel">
             {{ options.cancelButtonText }}
           </van-button>
         </van-col>
         <van-col span="12">
-          <van-button
-            :type="options.confirmButtonType"
-            block
-            size="small"
-            @click="onConfirm"
-          >
+          <van-button block size="small" @click="onConfirm">
             {{ options.confirmButtonText }}
           </van-button>
         </van-col>
