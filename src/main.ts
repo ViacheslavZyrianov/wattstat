@@ -28,6 +28,6 @@ app.use(pinia)
 app.use(router)
 
 const authStore = useAuthStore()
-await authStore.checkAuthStatus()
-
-app.mount('#app')
+authStore.checkAuthStatus().then(() => {
+  app.mount('#app')
+})
