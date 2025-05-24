@@ -6,6 +6,7 @@ import App from './App/Index.vue'
 import { registerSW } from 'virtual:pwa-register'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { useAuthStore } from '@/store/auth'
 import './assets/vant.css'
 import './assets/style.css'
 
@@ -19,10 +20,14 @@ registerSW({
 })
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
 const app = createApp(App)
 
-app.use(router)
-pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
+app.use(router)
+
+const authStore = useAuthStore()
+await authStore.checkAuthStatus()
 
 app.mount('#app')
