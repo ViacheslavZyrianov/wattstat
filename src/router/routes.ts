@@ -12,12 +12,6 @@ export default [
     component: () => import('@/views/Auth/Index.vue'),
   },
   {
-    path: '/auth/google-callback',
-    name: 'GoogleCallback',
-    meta: { layout: 'CenteredLayout' },
-    component: () => import('@/views/Auth/GoogleCallback.vue'),
-  },
-  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/Dashboard/Index.vue'),
@@ -48,5 +42,11 @@ export default [
     name: 'TermsOfService',
     meta: { layout: 'FullPageLayout' },
     component: () => import('@/views/TermsOfService/Index.vue'),
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    meta: { layout: 'CenteredLayout' },
+    component: () => import('@/views/NotFound/Index.vue'),
   },
 ]

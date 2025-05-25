@@ -1,5 +1,5 @@
-import { useAuthStore } from '@/store/auth'
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
+import { useGoogleAuthStore } from '@/store/auth/google'
 
 const publicRoutes = [
   '/auth',
@@ -14,14 +14,25 @@ export default {
     _: RouteLocationNormalized,
     next: NavigationGuardNext,
   ) {
-    const authStore = useAuthStore()
+    const googleAuthStore = useGoogleAuthStore()
     const isPublicRoute = publicRoutes.includes(to.path)
+    const isHomePage = to.path === '/'
 
+    // Special case for homepage
+    if (isHomePage) {
+      if (!googleAuthStore.getIsAuthenticated) {
+        // User is not authenticated on homepage, redirect to auth
+        next({ path: '/auth' })
+      } else {
+        // User is authenticated on homepage, redirect to dashboard
+        next({ path: '/dashboard' })
+      }
+    }
     // Public route - accessible to everyone
-    if (isPublicRoute) {
+    else if (isPublicRoute) {
       // If user is already authenticated and tries to access auth page,
-      // redirect to dashboard (or home)
-      if (authStore.getIsAuthenticated) {
+      // redirect to dashboard
+      if (googleAuthStore.getIsAuthenticated) {
         next({ path: '/dashboard' })
       } else {
         // Allow access to public route for non-authenticated users
@@ -30,7 +41,7 @@ export default {
     }
     // Protected route - requires authentication
     else {
-      if (authStore.getIsAuthenticated) {
+      if (googleAuthStore.getIsAuthenticated) {
         // User is authenticated, allow access
         next()
       } else {

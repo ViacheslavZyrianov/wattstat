@@ -1,14 +1,33 @@
-export interface User {
-  id: string
-  email: string
-  displayName: string
-  firstName: string
-  lastName: string
-  avatar: string
-  emailVerified: boolean
+import { b } from 'vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf'
+
+export interface GoogleCredentialResponse {
+  clientId: string
+  client_id: string
+  credential: string
+  select_by: string
 }
 
-export interface AuthState {
-  user: User | null
-  isLoading: boolean
+export interface GoogleUser {
+  id: string
+  email: string
+  name: string
+  picture: string
+  provider: string
+  created_at: string
+  last_login: string | null
+}
+
+export interface AuthGoogleState {
+  user: GoogleUser | null
+  token: string | null
+  isAuthing: boolean
+}
+
+export interface AuthGoogleGetters {
+  getIsAuthenticated: () => boolean
+  getUser: () => AuthGoogleState['user']
+}
+
+export interface AuthGoogleLogoutResponse {
+  successful: boolean
 }

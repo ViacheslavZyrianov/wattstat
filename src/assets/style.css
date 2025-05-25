@@ -74,6 +74,15 @@ a:hover {
     text-decoration: underline;
 }
 
+pre {
+    background-color: var(--van-background-3);
+    padding: 8px;
+    border-radius: 8px;
+    overflow: auto;
+    max-height: 90vh;
+    max-width: 90vw;
+}
+
 .van-tabs__nav--card {
     margin: 0 0 !important;
 }

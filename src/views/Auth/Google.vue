@@ -1,49 +1,22 @@
 <script setup>
-import { watch } from 'vue'
-import { useAuthStore } from '@/store/auth/index.js'
-import { showNotify } from 'vant'
+import { useGoogleAuthStore } from '@/store/auth/google.js'
 
-const authStore = useAuthStore()
+const googleAuthStore = useGoogleAuthStore()
 
-const emit = defineEmits(['onAuth'])
-
-// Handle manual sign-in click
-const handleManualSignIn = async () => {
-  try {
-    await authStore.initGoogleAuth()
-    authStore.setupGoogleSignIn()
-  } catch (error) {
-    showNotify({
-      message: `Failed to initialize Google auth: ${error}`,
-      background: '#ee0a24',
-      duration: 2000,
-    })
-  }
+const onGoogleAuth = async () => {
+  await googleAuthStore.auth()
 }
-
-watch(
-  () => authStore.getIsAuthenticated,
-  () => {
-    if (authStore.getIsAuthenticated) {
-      emit('onAuth')
-    }
-  },
-)
 </script>
 
-<!-- src/components/LoginPage.vue -->
 <template>
   <section class="login-container">
     <h2 style="margin-bottom: 32px">Sign in to your account</h2>
-    <h5>authStore.getIsAuthenticated = {{ authStore.getIsAuthenticated }}</h5>
-    <h5>authStore.getUser</h5>
-    <pre>{{ authStore.getUser }}</pre>
     <van-button
-      :loading="authStore.getIsLoading"
-      :disabled="authStore.getIsLoading"
       type="primary"
       block
-      @click="handleManualSignIn"
+      :loading="googleAuthStore.isAuthing"
+      :disabled="googleAuthStore.isAuthing"
+      @click="onGoogleAuth"
     >
       Sign in with Google
     </van-button>

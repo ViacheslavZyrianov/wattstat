@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/store/auth'
-import { useRouter } from 'vue-router'
 import eventBus from '@/eventBus'
+import { useGoogleAuthStore } from '@/store/auth/google'
 
-const router = useRouter()
-const authStore = useAuthStore()
+const googleAuthStore = useGoogleAuthStore()
 
 const onLogout = async (): Promise<void> => {
   eventBus.emit('showDialogConfirm', {
@@ -15,28 +13,27 @@ const onLogout = async (): Promise<void> => {
     confirmButtonType: 'danger',
   })
 
-  eventBus.on('confirm', async () => {
-    await authStore.logout()
-    router.push('/auth')
+  eventBus.on('confirm', () => {
+    googleAuthStore.logout()
   })
 }
 </script>
 
 <template>
-  <van-cell-group v-if="authStore.getUser">
+  <van-cell-group v-if="googleAuthStore.getUser">
     <van-cell>
       <template #title>
         <van-image
           round
           width="80px"
           height="80px"
-          :src="authStore.getUser.avatar"
+          :src="googleAuthStore.getUser.picture"
         />
       </template>
     </van-cell>
-    <van-cell title="Name" :value="authStore.getUser.displayName" />
+    <van-cell title="Name" :value="googleAuthStore.getUser.name" />
     <van-cell title="Email">
-      <van-text-ellipsis :content="authStore.getUser.email" />
+      <van-text-ellipsis :content="googleAuthStore.getUser.email" />
     </van-cell>
     <van-cell title="Logout">
       <van-button size="small" type="danger" plain @click="onLogout">

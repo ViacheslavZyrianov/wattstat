@@ -13,17 +13,17 @@ const axiosInstance = axios.create({
 })
 
 // Request interceptor
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     // Add auth token if available
-//     const token = localStorage.getItem('token')
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`
-//     }
-//     return config
-//   },
-//   (error) => Promise.reject(error),
-// )
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Add auth token if available
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error),
+)
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
