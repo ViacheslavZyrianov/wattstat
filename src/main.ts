@@ -9,7 +9,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import './assets/vant.css'
 import './assets/style.css'
-// import { useGoogleAuthStore } from '@/store/auth/google'
+import { useGoogleAuthStore } from '@/store/auth/google'
 
 registerSW({
   onNeedRefresh() {
@@ -28,10 +28,7 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 
-// const googleAuthStore = useGoogleAuthStore()
-//
-// googleAuthStore.auth().then(() => {
-//   app.mount('#app')
-// })
+const googleAuthStore = useGoogleAuthStore()
 
+googleAuthStore.isFallbackRenderButtonUsed = false
 app.mount('#app')

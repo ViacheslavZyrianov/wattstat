@@ -21,6 +21,7 @@ export interface AuthGoogleState {
   user: GoogleUser | null
   token: string | null
   isAuthing: boolean
+  isFallbackRenderButtonUsed: boolean
 }
 
 export interface AuthGoogleGetters {

@@ -13,6 +13,7 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
     user: null,
     token: null,
     isAuthing: false,
+    isFallbackRenderButtonUsed: false,
   }),
 
   getters: {
@@ -34,41 +35,48 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
       })
     },
 
+    renderGoogleButton(): void {
+      this.isFallbackRenderButtonUsed = true
+
+      const fallbackButtonElement = document.getElementById('fallback-button')
+      const parent = fallbackButtonElement.parentElement
+      const style = getComputedStyle(parent)
+      const paddingLeft = parseFloat(style.paddingLeft)
+      const paddingRight = parseFloat(style.paddingRight)
+      const totalPadding = paddingLeft + paddingRight
+      const width = parent.clientWidth - totalPadding
+
+      showNotify({
+        message:
+          'Google One Tap is not available, please authenticate with fallback button.',
+        background: 'var(--van-warning-color)',
+        duration: 2000,
+      })
+
+      google.accounts.id.renderButton(fallbackButtonElement, {
+        theme: 'filled_blue',
+        size: 'large',
+        width,
+      })
+    },
+
     async auth(): Promise<void> {
       if (this.getIsAuthenticated) {
         return
       }
       try {
+        this.isFallbackRenderButtonUsed = false
         this.isAuthing = true
         this.googleInitialize()
         window.google.accounts.id.prompt((notification) => {
-          if (notification.isDisplayed()) {
-            console.log('✅ One Tap is displayed')
-          }
           if (notification.isNotDisplayed()) {
             this.isAuthing = false
+            this.renderGoogleButton()
+
             console.log(
               '❌ One Tap was not displayed:',
               notification.getNotDisplayedReason(),
             )
-
-            if (notification.getNotDisplayedReason() === 'suppressed_by_user') {
-              showNotify({
-                message:
-                  'Please enable Google One Tap in your account settings.',
-                background: '#ee0a24',
-              })
-            }
-
-            if (
-              notification.getNotDisplayedReason() === 'credential_excluded'
-            ) {
-              showNotify({
-                message:
-                  'Please enable Google One Tap in your account settings.',
-                background: '#ee0a24',
-              })
-            }
 
             if (
               notification.getNotDisplayedReason() === 'opt_out_or_no_session'
@@ -89,6 +97,7 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
           }
           if (notification.isSkippedMoment()) {
             this.isAuthing = false
+            this.renderGoogleButton()
             console.log(
               '⚠️ One Tap was skipped:',
               notification.getSkippedReason(),
@@ -139,6 +148,7 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
     clearUser() {
       this.user = null
       this.token = null
+      this.isFallbackRenderButtonUsed = false
     },
 
     logout(): void {

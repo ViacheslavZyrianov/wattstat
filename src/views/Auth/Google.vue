@@ -12,6 +12,7 @@ const onGoogleAuth = async () => {
   <section class="login-container">
     <h2 style="margin-bottom: 32px">Sign in to your account</h2>
     <van-button
+      v-show="!googleAuthStore.isFallbackRenderButtonUsed"
       type="primary"
       block
       :loading="googleAuthStore.isAuthing"
@@ -20,6 +21,11 @@ const onGoogleAuth = async () => {
     >
       Sign in with Google
     </van-button>
+    <div
+      v-show="googleAuthStore.isFallbackRenderButtonUsed"
+      id="fallback-button"
+      style="width: 100%"
+    />
   </section>
 </template>
 
