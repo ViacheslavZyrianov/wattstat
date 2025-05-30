@@ -2,7 +2,6 @@
 import { computed, ComputedRef, onMounted, ref, Ref } from 'vue'
 import dayjs from 'dayjs'
 import { useReadingsStore } from '@/store/readings'
-import { ReadingRead } from '@/store/readings/types'
 import ReadingItem from './Item/Index.vue'
 
 const readingsStore = useReadingsStore()
