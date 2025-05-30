@@ -22,6 +22,13 @@ const version = ref(__APP_VERSION__)
     </van-cell>
   </van-cell-group>
   <van-cell-group>
+    <van-cell center title="Show codes (15.8.2/15.8.1)">
+      <template #right-icon>
+        <van-switch v-model="uiStore.isShowDayNightCodes" size="20px" />
+      </template>
+    </van-cell>
+  </van-cell-group>
+  <van-cell-group>
     <van-cell center title="Version">
       <template #value>
         <van-tag round type="warning">

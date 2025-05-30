@@ -12,8 +12,10 @@ import {
 import eventBus from '@/eventBus'
 import { useReadingsStore } from '@/store/readings'
 import { Reading, ReadingRead } from '@/store/readings/types'
+import { useUIStore } from '@/store/ui'
 
 const readingsStore = useReadingsStore()
+const uiStore = useUIStore()
 
 const isActionSheetReadingOpen: Ref<boolean> = ref(false)
 const isButtonSubmitDisabled: Ref<boolean> = ref(false)
@@ -125,7 +127,7 @@ onMounted(() => {
         <van-field
           v-model="form.day"
           name="day"
-          label="Day (15.8.2)"
+          :label="uiStore.getDayNightLabels.day"
           type="number"
           placeholder="Enter day reading"
           input-align="right"
@@ -134,7 +136,7 @@ onMounted(() => {
         <van-field
           v-model="form.night"
           name="night"
-          label="Night (15.8.1)"
+          :label="uiStore.getDayNightLabels.night"
           type="number"
           placeholder="Enter night reading"
           input-align="right"

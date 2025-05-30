@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ComputedRef } from 'vue'
+import { useUIStore } from '@/store/ui'
 
 const props = defineProps({
   title: {
@@ -15,6 +16,8 @@ const props = defineProps({
     default: '0',
   },
 })
+
+const uiStore = useUIStore()
 
 const sumTotalDayNight: ComputedRef<{ day: string; night: string }> = computed(
   () => ({
@@ -52,7 +55,7 @@ const kWhTotal: ComputedRef<number> = computed(
     <van-divider :hairline="false" />
     <van-row justify="space-between" align="center">
       <van-col>
-        <label> Day (15.8.2) </label>
+        <label>{{ uiStore.getDayNightLabels.day }}</label>
       </van-col>
       <van-col>
         <van-tag type="primary" style="margin-right: 8px">
@@ -63,7 +66,7 @@ const kWhTotal: ComputedRef<number> = computed(
     </van-row>
     <van-row justify="space-between" align="center">
       <van-col>
-        <label> Night (15.8.1) </label>
+        <label>{{ uiStore.getDayNightLabels.night }}</label>
       </van-col>
       <van-col>
         <van-tag type="primary" style="margin-right: 8px">
