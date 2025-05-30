@@ -125,7 +125,7 @@ onMounted(() => {
         <van-field
           v-model="form.day"
           name="day"
-          label="Day"
+          label="Day (15.8.2)"
           type="number"
           placeholder="Enter day reading"
           input-align="right"
@@ -134,7 +134,7 @@ onMounted(() => {
         <van-field
           v-model="form.night"
           name="night"
-          label="Night"
+          label="Night (15.8.1)"
           type="number"
           placeholder="Enter night reading"
           input-align="right"
