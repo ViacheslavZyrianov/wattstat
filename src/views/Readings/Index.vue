@@ -13,27 +13,6 @@ const activeTabYear: Ref<string> = ref(
   dayjs().format('YYYY') || Object.keys(readingsStore.readings)[0],
 )
 
-const kWhTotal: ComputedRef<ReadingRead> = computed(() => {
-  let day = 0
-  let night = 0
-
-  for (const year in readingsStore.readings) {
-    if (Array.isArray(readingsStore.readings[year])) {
-      for (const entry of readingsStore.readings[year]) {
-        day += Number(entry.day)
-        night += Number(entry.night)
-      }
-    }
-  }
-
-  return {
-    id: 0,
-    day: day.toString(),
-    night: night.toString(),
-    date: 'Total',
-  }
-})
-
 const isReadingsNotEmpty: ComputedRef<boolean> = computed(
   () => Object.keys(readingsStore.readings).length > 0,
 )
@@ -44,6 +23,72 @@ const fetchReadings = async () => {
   isLoading.value = false
 }
 
+const monthlyUsage = computed(() => {
+  const result: Record<
+    string,
+    Array<{
+      id: number | null
+      day: string
+      night: string
+      date: string
+      created_at: string
+    }>
+  > = {}
+
+  for (const [year, entries] of Object.entries(readingsStore.readings)) {
+    if (!Array.isArray(entries) || entries.length < 2) continue
+
+    // Sort by date ASCENDING (oldest to newest)
+    const sorted = [...entries].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    )
+
+    const usage = []
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = sorted[i - 1]
+      const curr = sorted[i]
+
+      usage.push({
+        id: curr.id ?? i + 1000,
+        day: Math.abs(parseInt(curr.day) - parseInt(prev.day)).toString(),
+        night: Math.abs(parseInt(curr.night) - parseInt(prev.night)).toString(),
+        date: curr.date, // usage occurred *in the month of this reading*
+        created_at: curr.created_at,
+      })
+    }
+
+    result[year] = usage.reverse() // Reverse to show the most recent month first
+  }
+
+  return result
+})
+
+const latestReading = computed(() => {
+  const allEntries: Array<{
+    id: number
+    day: string
+    night: string
+    date: string
+    created_at: string
+  }> = []
+
+  for (const entries of Object.values(readingsStore.readings)) {
+    if (Array.isArray(entries)) {
+      allEntries.push(...entries)
+    }
+  }
+
+  const latestEntry = allEntries.reduce(
+    (latest, entry) =>
+      new Date(entry.date) > new Date(latest.date) ? entry : latest,
+    allEntries[0],
+  )
+
+  latestEntry.date = 'Total'
+
+  return latestEntry
+})
+
 onMounted(async () => {
   await fetchReadings()
   isReady.value = true
@@ -53,9 +98,10 @@ onMounted(async () => {
 <template>
   <template v-if="isReady">
     <reading-item
-      :data="kWhTotal"
-      style="margin-bottom: 16px"
+      :data="latestReading"
+      title="Total"
       :has-swipe-cell="false"
+      style="margin-bottom: 16px"
     />
     <van-tabs
       v-if="isReadingsNotEmpty"
@@ -64,27 +110,19 @@ onMounted(async () => {
       animated
     >
       <van-tab
-        v-for="(readingDataForYear, readingYear) in readingsStore.readings"
+        v-for="(readingDataForYear, readingYear) in monthlyUsage"
         :key="readingYear"
         :title="`${readingYear}`"
         :name="readingYear"
       >
-        <van-pull-refresh
-          v-model="isLoading"
-          loading-text="Updating readings..."
-          pulling-text="Pull to refresh"
-          loosing-text="Pull to refresh"
-          @refresh="fetchReadings"
-        >
-          <div class="content">
-            <reading-item
-              v-for="readingDataForYearItem in readingDataForYear"
-              :key="readingDataForYearItem.id"
-              :data="readingDataForYearItem"
-              style="margin-top: 16px"
-            />
-          </div>
-        </van-pull-refresh>
+        <div class="content">
+          <reading-item
+            v-for="readingDataForYearItem in readingDataForYear"
+            :key="readingDataForYearItem.id"
+            :data="readingDataForYearItem"
+            class="reading-item"
+          />
+        </div>
       </van-tab>
     </van-tabs>
     <h3 v-else>
@@ -95,9 +133,18 @@ onMounted(async () => {
   </template>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .content {
   height: calc(100vh - 266px);
   overflow: auto;
+  padding-top: 16px;
+
+  .reading-item {
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>
