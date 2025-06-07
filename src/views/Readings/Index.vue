@@ -2,7 +2,9 @@
 import { computed, ComputedRef, onMounted, ref, Ref } from 'vue'
 import dayjs from 'dayjs'
 import { useReadingsStore } from '@/store/readings'
+import { ReadingRead } from '@/store/readings/types'
 import ReadingItem from './Item/Index.vue'
+import eventBus from '@/eventBus'
 
 const readingsStore = useReadingsStore()
 
@@ -23,16 +25,7 @@ const fetchReadings = async () => {
 }
 
 const monthlyUsage = computed(() => {
-  const result: Record<
-    string,
-    Array<{
-      id: number | null
-      day: string
-      night: string
-      date: string
-      created_at: string
-    }>
-  > = {}
+  const result: Record<string, ReadingRead[]> = {}
 
   for (const [year, entries] of Object.entries(readingsStore.readings)) {
     if (!Array.isArray(entries) || entries.length < 2) continue
@@ -50,26 +43,21 @@ const monthlyUsage = computed(() => {
       usage.push({
         id: curr.id ?? i + 1000,
         day: Math.abs(parseInt(curr.day) - parseInt(prev.day)).toString(),
+        enteredDay: curr.day,
         night: Math.abs(parseInt(curr.night) - parseInt(prev.night)).toString(),
-        date: curr.date, // usage occurred *in the month of this reading*
-        created_at: curr.created_at,
+        enteredNight: curr.night,
+        date: curr.date,
       })
     }
 
-    result[year] = usage.reverse() // Reverse to show the most recent month first
+    result[year] = usage.reverse() // Most recent first
   }
 
   return result
 })
 
-const latestReading = computed(() => {
-  const allEntries: Array<{
-    id: number
-    day: string
-    night: string
-    date: string
-    created_at: string
-  }> = []
+const initialReading = computed(() => {
+  const allEntries: ReadingRead[] = []
 
   for (const entries of Object.values(readingsStore.readings)) {
     if (Array.isArray(entries)) {
@@ -77,16 +65,53 @@ const latestReading = computed(() => {
     }
   }
 
-  const latestEntry = allEntries.reduce(
+  return allEntries.reduce(
+    (earliest, entry) =>
+      new Date(entry.date) < new Date(earliest.date) ? entry : earliest,
+    allEntries[0],
+  )
+})
+
+const latestReading = computed(() => {
+  const allEntries: ReadingRead[] = []
+
+  for (const entries of Object.values(readingsStore.readings)) {
+    if (Array.isArray(entries)) {
+      allEntries.push(...entries)
+    }
+  }
+
+  return allEntries.reduce(
     (latest, entry) =>
       new Date(entry.date) > new Date(latest.date) ? entry : latest,
     allEntries[0],
   )
-
-  latestEntry.date = 'Total'
-
-  return latestEntry
 })
+
+const isOnlyInitialReading: ComputedRef<boolean> = computed(
+  () =>
+    Object.keys(readingsStore.readings).length === 1 &&
+    readingsStore.readings[Object.keys(readingsStore.readings)[0]].length === 1,
+)
+
+const onEditInitialReading = () => {
+  eventBus.emit('openActionSheetEditReading', initialReading.value)
+}
+
+const onDeleteInitialReading = async () => {
+  eventBus.emit('showDialogConfirm', {
+    title: 'Delete reading',
+    message: `Are you sure you want to delete reading from ${dayjs(initialReading.value.date).format('DD.MM.YYYY')}?`,
+    confirmButtonText: 'Yes, delete',
+    cancelButtonText: 'No',
+    confirmButtonType: 'danger',
+  })
+
+  eventBus.on('confirm', async () => {
+    await readingsStore.deleteReading(initialReading.value.id)
+    await readingsStore.fetchReadings()
+  })
+}
 
 onMounted(async () => {
   await fetchReadings()
@@ -102,8 +127,36 @@ onMounted(async () => {
       :has-swipe-cell="false"
       style="margin-bottom: 16px"
     />
+    <template v-if="isOnlyInitialReading">
+      <h3 style="margin-bottom: 16px">
+        You have only initial reading, please enter second reading to see your
+        usage!
+      </h3>
+      <h4 style="margin-bottom: 16px">
+        If you want to change initial reading, click on "Edit initial reading"
+      </h4>
+      <van-button
+        type="primary"
+        block
+        style="margin-bottom: 16px"
+        @click="onEditInitialReading"
+      >
+        Edit initial reading
+      </van-button>
+      <h4 style="margin-bottom: 16px">
+        If you want to delete initial reading, click on "Delete initial reading"
+      </h4>
+      <van-button
+        type="danger"
+        block
+        style="margin-bottom: 16px"
+        @click="onDeleteInitialReading"
+      >
+        Delete initial reading
+      </van-button>
+    </template>
     <van-tabs
-      v-if="isReadingsNotEmpty"
+      v-else-if="isReadingsNotEmpty"
       v-model:active="activeTabYear"
       type="card"
       animated
