@@ -26,7 +26,12 @@ const title: ComputedRef<string> = computed(() =>
 )
 
 const onEdit = () => {
-  eventBus.emit('openActionSheetEditReading', props.data)
+  eventBus.emit('openActionSheetEditReading', {
+    id: props.data.id,
+    day: props.data.enteredDay,
+    night: props.data.enteredNight,
+    date: props.data.date,
+  })
 }
 
 const onDelete = async () => {
