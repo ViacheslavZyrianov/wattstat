@@ -1,15 +1,14 @@
 import { createApp } from 'vue'
 import router from './router/index'
 import './eventBus'
-import './global'
 import './types.d'
 import App from './App/Index.vue'
 import { registerSW } from 'virtual:pwa-register'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import './assets/vant.css'
 import './assets/style.css'
 import { useGoogleAuthStore } from '@/store/auth/google'
+import vuetify from './plugins/vuetify'
 
 registerSW({
   onNeedRefresh() {
@@ -27,6 +26,7 @@ const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
+app.use(vuetify)
 
 const googleAuthStore = useGoogleAuthStore()
 

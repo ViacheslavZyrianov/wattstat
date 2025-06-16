@@ -1,7 +1,7 @@
 // axios.js
 import axios from 'axios'
-import { showNotify } from 'vant'
 import { useGoogleAuthStore } from '@/store/auth/google'
+import eventBus from '@/eventBus'
 
 // Create an Axios instance
 const axiosInstance = axios.create({
@@ -38,10 +38,8 @@ axiosInstance.interceptors.response.use(
       const googleAuthStore = useGoogleAuthStore()
       googleAuthStore.logout()
     } else if (!noErrorApiUrls.includes(apiUrl)) {
-      showNotify({
-        message: `ERROR: ${error.message}\nURL: ${apiUrl}`,
-        background: '#ee0a24',
-        duration: 2000,
+      eventBus.emit('showErrorSnackbar', {
+        text: `ERROR: ${error.message}\nURL: ${apiUrl}`,
       })
     }
 

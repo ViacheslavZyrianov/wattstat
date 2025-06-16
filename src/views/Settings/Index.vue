@@ -8,33 +8,43 @@ const version = ref(__APP_VERSION__)
 </script>
 
 <template>
-  <van-cell-group>
-    <van-cell center title="Theme">
-      <template #right-icon>
-        Light
-        <van-switch
-          v-model="uiStore.isThemeDark"
-          size="20px"
-          style="margin-inline: 8px"
+  <v-list>
+    <v-list-item>
+      <v-list-item-title>Theme</v-list-item-title>
+      <template #append>
+        <div class="d-flex align-center">
+          <v-switch
+            v-model="uiStore.isThemeDark"
+            color="primary"
+            hide-details
+            density="compact"
+            inset
+            true-icon="mdi-brightness-2"
+            false-icon="mdi-brightness-5"
+          />
+        </div>
+      </template>
+    </v-list-item>
+
+    <v-list-item>
+      <v-list-item-title>Show codes (15.8.2/15.8.1)</v-list-item-title>
+      <template #append>
+        <v-switch
+          v-model="uiStore.isShowDayNightCodes"
+          color="primary"
+          hide-details
+          density="compact"
         />
-        Dark
       </template>
-    </van-cell>
-  </van-cell-group>
-  <van-cell-group>
-    <van-cell center title="Show codes (15.8.2/15.8.1)">
-      <template #right-icon>
-        <van-switch v-model="uiStore.isShowDayNightCodes" size="20px" />
-      </template>
-    </van-cell>
-  </van-cell-group>
-  <van-cell-group>
-    <van-cell center title="Version">
-      <template #value>
-        <van-tag round type="warning">
+    </v-list-item>
+
+    <v-list-item>
+      <v-list-item-title>Version</v-list-item-title>
+      <template #append>
+        <v-chip color="warning" variant="outlined" size="small">
           {{ version }}
-        </van-tag>
+        </v-chip>
       </template>
-    </van-cell>
-  </van-cell-group>
+    </v-list-item>
+  </v-list>
 </template>

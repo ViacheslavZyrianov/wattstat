@@ -1,11 +1,10 @@
 import { TabBarItem } from '@/App/components/TabBar/types'
 
 const tabBarItems: TabBarItem[] = [
-  { icon: 'list-switching', name: 'Dashboard', path: '/dashboard' },
-  { icon: 'user-o', name: 'Profile', path: '/profile' },
-  { icon: 'add', name: '', path: '', color: '#07c160' },
-  { icon: 'orders-o', name: 'Readings', path: '/readings' },
-  { icon: 'setting-o', name: 'Settings', path: '/settings' },
+  { icon: 'mdi-view-dashboard-outline', path: '/dashboard' },
+  { icon: 'mdi-list-box-outline', path: '/readings' },
+  { icon: 'mdi-account-outline', path: '/profile' },
+  { icon: 'mdi-cog-outline', path: '/settings' },
 ]
 
 export default tabBarItems

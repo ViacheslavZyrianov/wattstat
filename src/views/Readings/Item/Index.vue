@@ -5,24 +5,45 @@ import ReadingItemContent from './Content.vue'
 import eventBus from '@/eventBus'
 import { useReadingsStore } from '@/store/readings'
 import dayjs from 'dayjs'
+import { useUIStore } from '@/store/ui'
 
 const readingsStore = useReadingsStore()
+const uiStore = useUIStore()
 
 const props = defineProps({
   data: {
     type: Object as PropType<ReadingRead>,
     default: () => ({}),
   },
-  hasSwipeCell: {
-    type: Boolean,
-    default: true,
+  customTitle: {
+    type: String,
+    default: '',
   },
 })
 
 const title: ComputedRef<string> = computed(() =>
-  dayjs(props.data.date).isValid()
-    ? dayjs(props.data.date).format('MMMM')
-    : props.data.date,
+  props.customTitle
+    ? props.customTitle
+    : dayjs(props.data.date).isValid()
+      ? dayjs(props.data.date).format('MMMM')
+      : props.data.date,
+)
+
+const sumTotalDayNight: ComputedRef<{ day: string; night: string }> = computed(
+  () => ({
+    day: (Number(props.data.day) * 4.32).toFixed(2),
+    night: (Number(props.data.night) * 2.16).toFixed(2),
+  }),
+)
+
+const sumTotal: ComputedRef<string> = computed(() =>
+  (
+    Number(sumTotalDayNight.value.day) + Number(sumTotalDayNight.value.night)
+  ).toFixed(2),
+)
+
+const kWhTotal: ComputedRef<number> = computed(
+  () => Number(props.data.day) + Number(props.data.night),
 )
 
 const onEdit = () => {
@@ -40,7 +61,7 @@ const onDelete = async () => {
     message: `Are you sure you want to delete reading from ${dayjs(props.data.date).format('DD.MM.YYYY')}?`,
     confirmButtonText: 'Yes, delete',
     cancelButtonText: 'No',
-    confirmButtonType: 'danger',
+    confirmButtonColor: 'red',
   })
 
   eventBus.on('confirm', async () => {
@@ -51,44 +72,71 @@ const onDelete = async () => {
 </script>
 
 <template>
-  <van-swipe-cell v-if="hasSwipeCell" :border="false">
-    <template #default>
-      <reading-item-content
-        :title="title"
-        :day="data.day"
-        :night="data.night"
-      />
-    </template>
-    <template #right>
-      <div class="swipe-action-buttons">
-        <van-button
-          type="primary"
-          text="Edit"
-          style="height: 100%; margin-left: 8px"
+  <v-card variant="elevated" class="mb-6">
+    <v-card-title class="d-flex align-center pa-0">
+      {{ title }}
+      <v-spacer />
+
+      <div class="d-flex align-center">
+        <v-btn
+          variant="text"
+          color="primary"
+          icon="mdi-pencil"
+          size="small"
           @click="onEdit"
         />
-        <van-button
-          type="danger"
-          text="Delete"
-          style="height: 100%; margin-left: 8px"
+        <v-btn
+          variant="text"
+          color="red"
+          icon="mdi-delete"
+          size="small"
           @click="onDelete"
         />
       </div>
-    </template>
-  </van-swipe-cell>
-  <reading-item-content
-    v-else
-    :title="title"
-    :day="data.day"
-    :night="data.night"
-  />
+    </v-card-title>
+
+    <v-list class="pa-0">
+      <v-list-item class="pa-0" min-height="36px">
+        <template v-slot:prepend> Total </template>
+        <template v-slot:append>
+          <v-chip color="primary" size="small" class="mr-2">
+            {{ sumTotal }} <v-icon>mdi-currency-uah</v-icon>
+          </v-chip>
+          <v-chip color="green" size="small">
+            {{ kWhTotal }} <v-icon>mdi-lightning-bolt</v-icon>
+          </v-chip>
+        </template>
+      </v-list-item>
+      <v-list-item class="pa-0" min-height="36px">
+        <template v-slot:prepend>
+          <div class="text-subtitle-2">{{ uiStore.getDayNightLabels.day }}</div>
+        </template>
+        <template v-slot:append>
+          <v-chip color="primary" size="small" class="mr-2">
+            {{ sumTotalDayNight.day }} <v-icon>mdi-currency-uah</v-icon>
+          </v-chip>
+          <v-chip color="green" size="small">
+            {{ data.day }} <v-icon>mdi-lightning-bolt</v-icon>
+          </v-chip>
+        </template>
+      </v-list-item>
+      <v-list-item class="pa-0" min-height="36px">
+        <template v-slot:prepend>
+          <div class="text-subtitle-2">
+            {{ uiStore.getDayNightLabels.night }}
+          </div>
+        </template>
+        <template v-slot:append>
+          <v-chip color="primary" size="small" class="mr-2">
+            {{ sumTotalDayNight.night }} <v-icon>mdi-currency-uah</v-icon>
+          </v-chip>
+          <v-chip color="green" size="small">
+            {{ data.night }} <v-icon>mdi-lightning-bolt</v-icon>
+          </v-chip>
+        </template>
+      </v-list-item>
+    </v-list>
+  </v-card>
 </template>
 
-<style scoped>
-.swipe-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  height: 100%;
-}
-</style>
+<style scoped></style>

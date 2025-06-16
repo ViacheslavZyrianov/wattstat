@@ -1,15 +1,8 @@
-import {
-  RouteLocationAsRelativeGeneric,
-  RouteLocationAsPathGeneric,
-} from 'vue-router'
+import type { IconSize } from 'vuetify/components/VIcon'
 
 export type TabBarItem = {
   icon: string
-  name: string
-  path:
-    | string
-    | RouteLocationAsRelativeGeneric
-    | RouteLocationAsPathGeneric
-    | undefined
-  color?: string
+  path: string
+  iconColor?: string
+  iconSize?: IconSize
 }

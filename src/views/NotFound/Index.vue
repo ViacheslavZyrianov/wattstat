@@ -7,7 +7,9 @@ const router = useRouter()
 <template>
   <h1>404</h1>
   <h2>Page not found</h2>
-  <van-button type="primary" @click="router.push('/')"> Go to Home </van-button>
+  <v-btn variant="elevated" color="primary" @click="router.push('/')">
+    Go to Home
+  </v-btn>
 </template>
 
 <style scoped></style>

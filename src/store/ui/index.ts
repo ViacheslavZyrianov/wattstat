@@ -8,6 +8,9 @@ export const useUIStore = defineStore('ui', {
     isShowDayNightCodes: true,
   }),
   getters: {
+    getIsThemeDark(state) {
+      return state.isThemeDark
+    },
     getTheme(state) {
       return state.isThemeDark ? 'dark' : 'light'
     },

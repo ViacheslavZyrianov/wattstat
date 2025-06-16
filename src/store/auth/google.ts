@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import axios from '@/axios'
-import { showNotify } from 'vant'
 import {
   AuthGoogleLogoutResponse,
   AuthGoogleState,
   GoogleCredentialResponse,
 } from '@/store/auth/types'
 import router from '@/router'
+import eventBus from '@/eventBus'
 
 export const useGoogleAuthStore = defineStore('googleAuth', {
   state: (): AuthGoogleState => ({
@@ -46,11 +46,8 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
       const totalPadding = paddingLeft + paddingRight
       const width = parent.clientWidth - totalPadding
 
-      showNotify({
-        message:
-          'Google One Tap is not available, please authenticate with fallback button.',
-        background: 'var(--van-warning-color)',
-        duration: 2000,
+      eventBus.emit('showWarningSnackbar', {
+        text: 'Google One Tap is not available, please authenticate with fallback button.',
       })
 
       google.accounts.id.renderButton(fallbackButtonElement, {
@@ -81,17 +78,14 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
             if (
               notification.getNotDisplayedReason() === 'opt_out_or_no_session'
             ) {
-              showNotify({
-                message:
-                  'You have opted out of Google One Tap or no session found.',
-                background: '#ee0a24',
+              eventBus.emit('showErrorSnackbar', {
+                text: 'You have opted out of Google One Tap or no session found.',
               })
             }
 
             if (notification.getNotDisplayedReason() === 'user_cancel') {
-              showNotify({
-                message: 'Google One Tap was cancelled by the user.',
-                background: '#ee0a24',
+              eventBus.emit('showErrorSnackbar', {
+                text: 'Google One Tap was cancelled by the user.',
               })
             }
           }
@@ -113,10 +107,8 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
         })
       } catch (error) {
         this.isAuthing = false
-        showNotify({
-          message: `Failed to initialize Google auth: ${error}`,
-          background: '#ee0a24',
-          duration: 2000,
+        eventBus.emit('showErrorSnackbar', {
+          text: `Failed to initialize Google auth: ${error}`,
         })
       }
     },
@@ -133,9 +125,8 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
 
         await router.push('/dashboard')
       } catch (error) {
-        showNotify({
-          message: `Failed to handle Google credentials response: ${error}`,
-          background: '#ee0a24',
+        eventBus.emit('showErrorSnackbar', {
+          text: `Failed to handle Google credentials response: ${error}`,
         })
       }
     },
@@ -159,9 +150,8 @@ export const useGoogleAuthStore = defineStore('googleAuth', {
           this.user.email,
           (done: AuthGoogleLogoutResponse) => {
             if (!done.successful) {
-              showNotify({
-                message: 'Failed to revoke Google session',
-                background: '#ee0a24',
+              eventBus.emit('showErrorSnackbar', {
+                text: 'Failed to revoke Google session',
               })
             }
           },

@@ -30,7 +30,6 @@ const monthlyUsage = computed(() => {
   for (const [year, entries] of Object.entries(readingsStore.readings)) {
     if (!Array.isArray(entries) || entries.length < 2) continue
 
-    // Sort by date ASCENDING (oldest to newest)
     const sorted = [...entries].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     )
@@ -90,8 +89,12 @@ const latestReading = computed(() => {
 
 const isOnlyInitialReading: ComputedRef<boolean> = computed(
   () =>
-    Object.keys(readingsStore.readings).length === 1 &&
+    activeTabYear.value === Object.keys(readingsStore.readings)[0] &&
     readingsStore.readings[Object.keys(readingsStore.readings)[0]].length === 1,
+)
+
+const years = computed(() =>
+  Object.keys(readingsStore.readings).sort((a, b) => b.localeCompare(a)),
 )
 
 const onEditInitialReading = () => {
@@ -104,12 +107,16 @@ const onDeleteInitialReading = async () => {
     message: `Are you sure you want to delete reading from ${dayjs(initialReading.value.date).format('DD.MM.YYYY')}?`,
     confirmButtonText: 'Yes, delete',
     cancelButtonText: 'No',
-    confirmButtonType: 'danger',
+    confirmButtonColor: 'red',
   })
 
   eventBus.on('confirm', async () => {
     await readingsStore.deleteReading(initialReading.value.id)
     await readingsStore.fetchReadings()
+
+    if (!readingsStore.readings[activeTabYear.value]) {
+      activeTabYear.value = Object.keys(readingsStore.readings)[0]
+    }
   })
 }
 
@@ -121,62 +128,54 @@ onMounted(async () => {
 
 <template>
   <template v-if="isReady">
-    <reading-item
-      :data="latestReading"
-      title="Total"
-      :has-swipe-cell="false"
-      style="margin-bottom: 16px"
-    />
-    <template v-if="isOnlyInitialReading">
-      <h3 style="margin-bottom: 16px">
-        You have only initial reading, please enter second reading to see your
-        usage!
-      </h3>
-      <h4 style="margin-bottom: 16px">
-        If you want to change initial reading, click on "Edit initial reading"
-      </h4>
-      <van-button
-        type="primary"
-        block
-        style="margin-bottom: 16px"
-        @click="onEditInitialReading"
+    <template v-if="isReadingsNotEmpty">
+      <v-chip-group
+        v-model="activeTabYear"
+        row
+        mandatory
+        selected-class="bg-primary text-white mb-4"
       >
-        Edit initial reading
-      </van-button>
-      <h4 style="margin-bottom: 16px">
-        If you want to delete initial reading, click on "Delete initial reading"
-      </h4>
-      <van-button
-        type="danger"
-        block
-        style="margin-bottom: 16px"
-        @click="onDeleteInitialReading"
-      >
-        Delete initial reading
-      </van-button>
+        <v-chip v-for="year in years" :key="year" :value="year">
+          {{ year }}
+        </v-chip>
+      </v-chip-group>
+
+      <template v-if="isOnlyInitialReading">
+        <h3 style="margin-bottom: 16px">
+          You have only initial reading for this year, please enter second
+          reading to see your usage!
+        </h3>
+        <h4 style="margin-bottom: 16px">
+          If you want to change initial reading, click on "Edit initial reading"
+        </h4>
+        <v-btn
+          color="primary"
+          block
+          style="margin-bottom: 16px"
+          @click="onEditInitialReading"
+        >
+          Edit initial reading
+        </v-btn>
+        <h4 style="margin-bottom: 16px">
+          If you want to delete initial reading, click on "Delete initial
+          reading"
+        </h4>
+        <v-btn
+          color="red"
+          block
+          style="margin-bottom: 16px"
+          @click="onDeleteInitialReading"
+        >
+          Delete initial reading
+        </v-btn>
+      </template>
+
+      <reading-item
+        v-for="readingDataForYearItem in monthlyUsage[activeTabYear]"
+        :key="readingDataForYearItem.id"
+        :data="readingDataForYearItem"
+      />
     </template>
-    <van-tabs
-      v-else-if="isReadingsNotEmpty"
-      v-model:active="activeTabYear"
-      type="card"
-      animated
-    >
-      <van-tab
-        v-for="(readingDataForYear, readingYear) in monthlyUsage"
-        :key="readingYear"
-        :title="`${readingYear}`"
-        :name="readingYear"
-      >
-        <div class="content">
-          <reading-item
-            v-for="readingDataForYearItem in readingDataForYear"
-            :key="readingDataForYearItem.id"
-            :data="readingDataForYearItem"
-            class="reading-item"
-          />
-        </div>
-      </van-tab>
-    </van-tabs>
     <h3 v-else>
       You still have no electricity readings!
       <br />
@@ -184,19 +183,3 @@ onMounted(async () => {
     </h3>
   </template>
 </template>
-
-<style lang="scss" scoped>
-.content {
-  height: calc(100vh - 266px);
-  overflow: auto;
-  padding-top: 16px;
-
-  .reading-item {
-    margin-bottom: 16px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-}
-</style>

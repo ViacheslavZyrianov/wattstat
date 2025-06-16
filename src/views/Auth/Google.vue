@@ -9,30 +9,26 @@ const onGoogleAuth = async () => {
 </script>
 
 <template>
-  <section class="login-container">
-    <h2 style="margin-bottom: 32px">Sign in to your account</h2>
-    <van-button
-      v-show="!googleAuthStore.isFallbackRenderButtonUsed"
-      type="primary"
-      block
-      :loading="googleAuthStore.isAuthing"
-      :disabled="googleAuthStore.isAuthing"
-      @click="onGoogleAuth"
-    >
-      Sign in with Google
-    </van-button>
-    <div
-      v-show="googleAuthStore.isFallbackRenderButtonUsed"
-      id="fallback-button"
-      style="width: 100%"
-    />
-  </section>
+  <v-card>
+    <v-card-title>Sign in to your account</v-card-title>
+    <v-card-actions>
+      <v-btn
+        v-show="!googleAuthStore.isFallbackRenderButtonUsed"
+        variant="elevated"
+        color="primary"
+        prepend-icon="mdi-google"
+        block
+        :loading="googleAuthStore.isAuthing"
+        :disabled="googleAuthStore.isAuthing"
+        @click="onGoogleAuth"
+      >
+        Sign in with Google
+      </v-btn>
+      <div
+        v-show="googleAuthStore.isFallbackRenderButtonUsed"
+        id="fallback-button"
+        style="width: 100%"
+      />
+    </v-card-actions>
+  </v-card>
 </template>
-
-<style scoped>
-.login-container {
-  max-width: 400px;
-  padding: 16px;
-  border-radius: 8px;
-}
-</style>

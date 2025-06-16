@@ -1,13 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { VantResolver } from '@vant/auto-import-resolver'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
 import pkg from './package.json' with { type: 'json' }
+import vuetify from 'vite-plugin-vuetify'
 
 const version = pkg.version
 
@@ -48,11 +46,6 @@ export default defineConfig({
         icons,
       },
     }),
-    AutoImport({
-      resolvers: [VantResolver()],
-    }),
-    Components({
-      resolvers: [VantResolver()],
-    }),
+    vuetify(),
   ],
 })

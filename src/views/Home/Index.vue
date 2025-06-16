@@ -24,7 +24,5 @@ const installApp = async () => {
 </script>
 
 <template>
-  <van-button v-if="deferredPrompt" @click="installApp">
-    Install WattStat
-  </van-button>
+  <v-btn v-if="deferredPrompt" @click="installApp"> Install WattStat </v-btn>
 </template>

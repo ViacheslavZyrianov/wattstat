@@ -10,7 +10,7 @@ const onLogout = async (): Promise<void> => {
     message: 'Are you sure you want to logout?',
     confirmButtonText: 'Yes, logout',
     cancelButtonText: 'No',
-    confirmButtonType: 'danger',
+    confirmButtonColor: 'red',
   })
 
   eventBus.on('confirm', () => {
@@ -20,25 +20,31 @@ const onLogout = async (): Promise<void> => {
 </script>
 
 <template>
-  <van-cell-group v-if="googleAuthStore.getUser">
-    <van-cell>
-      <template #title>
-        <van-image
-          round
-          width="80px"
-          height="80px"
-          :src="googleAuthStore.getUser.picture"
-        />
-      </template>
-    </van-cell>
-    <van-cell title="Name" :value="googleAuthStore.getUser.name" />
-    <van-cell title="Email">
-      <van-text-ellipsis :content="googleAuthStore.getUser.email" />
-    </van-cell>
-    <van-cell title="Logout">
-      <van-button size="small" type="danger" plain @click="onLogout">
+  <v-card v-if="googleAuthStore.getUser">
+    <v-card-text class="text-center pa-6">
+      <v-avatar size="120" class="mb-4" color="primary">
+        <v-img :src="googleAuthStore.getUser.picture" alt="Profile Avatar" />
+      </v-avatar>
+
+      <h2 class="text-h5 font-weight-medium mb-2">
+        {{ googleAuthStore.getUser.name }}
+      </h2>
+
+      <p class="text-body-1 text-medium-emphasis mb-6 text-truncate">
+        {{ googleAuthStore.getUser.email }}
+      </p>
+
+      <!-- Logout Button -->
+      <v-btn
+        color="red"
+        variant="elevated"
+        block
+        class="mt-4"
+        prepend-icon="mdi-logout"
+        @click="onLogout"
+      >
         Logout
-      </van-button>
-    </van-cell>
-  </van-cell-group>
+      </v-btn>
+    </v-card-text>
+  </v-card>
 </template>

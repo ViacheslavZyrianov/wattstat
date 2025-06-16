@@ -1,16 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main>
-    <slot />
-  </main>
+  <v-app>
+    <v-main class="d-flex align-center justify-center fill-height">
+      <slot />
+    </v-main>
+  </v-app>
 </template>
-
-<style lang="scss" scoped>
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-</style>
