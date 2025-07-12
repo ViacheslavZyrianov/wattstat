@@ -19,3 +19,7 @@
     width: 100%;
     transform: translateY(-16px);
 }
+
+ul {
+    list-style: inside;
+}
