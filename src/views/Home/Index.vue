@@ -1,62 +1,18 @@
 <script setup lang="ts">
-import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
+import { usePwaInstall } from '@/composables/usePwaInstall'
 
-const isButtonInstallPWAVisible: Ref<boolean> = ref(false)
-const installPrompt: Ref<Event | null> = ref(null)
+const { canInstall, promptInstall, isPwa } = usePwaInstall()
 
-const addEventListenerBeforeInstallPrompt = () => {
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault()
-    installPrompt.value = event
-    isButtonInstallPWAVisible.value = true
-  })
+const onInstallPWA = async () => {
+  const outcome = await promptInstall()
+  console.log(`Install prompt outcome: ${outcome}`)
 }
-
-const removeEventListenerBeforeInstallPrompt = () => {
-  window.removeEventListener('beforeinstallprompt')
-}
-
-const addEventListenerAppInstalled = () => {
-  window.addEventListener('appinstalled', () => {
-    disableInAppInstallPrompt()
-  })
-}
-
-const removeEventListenerAppInstalled = () => {
-  window.removeEventListener('appinstalled')
-}
-
-const disableInAppInstallPrompt = () => {
-  installPrompt.value = null
-  isButtonInstallPWAVisible.value = false
-}
-
-const installPWA = async () => {
-  if (!installPrompt.value) return
-
-  installPrompt.value.prompt()
-
-  const result = await installPrompt.value.userChoice
-  console.log(`Install prompt outcome: ${result.outcome}`)
-
-  disableInAppInstallPrompt()
-  installPrompt.value = null
-}
-
-onMounted(() => {
-  addEventListenerBeforeInstallPrompt()
-  addEventListenerAppInstalled()
-})
-
-onBeforeUnmount(() => {
-  removeEventListenerBeforeInstallPrompt()
-  removeEventListenerAppInstalled()
-})
 </script>
 
 <template>
   <v-container>
     <v-card>
+      <v-chip>v1</v-chip>
       <h4 class="text-h4 font-weight-bold mb-4">
         Watt's Up?<br />
         It's WattStat!
@@ -67,10 +23,10 @@ onBeforeUnmount(() => {
       </p>
       <p class="mb-4">Add it to your phone for quick, app-like access!</p>
       <v-btn
-        v-if="isButtonInstallPWAVisible"
+        v-if="canInstall && !isPwa"
         color="primary"
         prepend-icon="mdi-lightning-bolt"
-        @click="installPWA"
+        @click="onInstallPWA"
       >
         Install WattStat
       </v-btn>
