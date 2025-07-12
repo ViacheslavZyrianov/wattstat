@@ -46,7 +46,7 @@ export default defineConfig({
         icons,
       },
       devOptions: {
-        enabled: true,
+        enabled: process.env.NODE_ENV === 'development',
       },
     }),
     vuetify(),
