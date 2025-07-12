@@ -32,8 +32,10 @@ const appBarColor: ComputedRef<undefined | 'primary'> = computed(() =>
         <slot />
       </v-container>
     </v-main>
-    <tab-bar v-if="authGoogleAuthStore.getIsAuthenticated" />
+    <template v-if="authGoogleAuthStore.getIsAuthenticated">
+      <tab-bar />
+      <action-sheet-add-edit-reading />
+    </template>
     <dialog-confirm />
-    <action-sheet-add-edit-reading />
   </v-app>
 </template>
