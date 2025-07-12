@@ -45,6 +45,9 @@ export default defineConfig({
         theme_color: '#6DACFF',
         icons,
       },
+      devOptions: {
+        enabled: true,
+      },
     }),
     vuetify(),
   ],
