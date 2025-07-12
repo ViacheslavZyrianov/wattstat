@@ -12,7 +12,7 @@ const onInstallPWA = async () => {
 <template>
   <v-container>
     <v-card>
-      <v-chip>v1</v-chip>
+      <v-chip>v2</v-chip>
       <h4 class="text-h4 font-weight-bold mb-4">
         Watt's Up?<br />
         It's WattStat!
@@ -23,7 +23,7 @@ const onInstallPWA = async () => {
       </p>
       <p class="mb-4">Add it to your phone for quick, app-like access!</p>
       <v-btn
-        v-if="canInstall && !isPwa"
+        v-if="!isPwa"
         color="primary"
         prepend-icon="mdi-lightning-bolt"
         @click="onInstallPWA"
