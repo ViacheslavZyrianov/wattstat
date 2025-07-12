@@ -1,26 +1,57 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 
-const deferredPrompt = ref(null)
+const isButtonInstallPWAVisible: Ref<boolean> = ref(false)
+const installPrompt: Ref<Event | null> = ref(null)
+
+const addEventListenerBeforeInstallPrompt = () => {
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault()
+    installPrompt.value = event
+    isButtonInstallPWAVisible.value = true
+  })
+}
+
+const removeEventListenerBeforeInstallPrompt = () => {
+  window.removeEventListener('beforeinstallprompt')
+}
+
+const addEventListenerAppInstalled = () => {
+  window.addEventListener('appinstalled', () => {
+    disableInAppInstallPrompt()
+  })
+}
+
+const removeEventListenerAppInstalled = () => {
+  window.removeEventListener('appinstalled')
+}
+
+const disableInAppInstallPrompt = () => {
+  installPrompt.value = null
+  isButtonInstallPWAVisible.value = false
+}
+
+const installPWA = async () => {
+  if (!installPrompt.value) return
+
+  installPrompt.value.prompt()
+
+  const result = await installPrompt.value.userChoice
+  console.log(`Install prompt outcome: ${result.outcome}`)
+
+  disableInAppInstallPrompt()
+  installPrompt.value = null
+}
 
 onMounted(() => {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    deferredPrompt.value = e
-  })
+  addEventListenerBeforeInstallPrompt()
+  addEventListenerAppInstalled()
 })
 
-const installApp = async () => {
-  if (!deferredPrompt.value) return
-  deferredPrompt.value.prompt()
-  const choiceResult = await deferredPrompt.value.userChoice
-  if (choiceResult.outcome === 'accepted') {
-    console.log('User accepted the install prompt')
-  } else {
-    console.log('User dismissed the install prompt')
-  }
-  deferredPrompt.value = null
-}
+onBeforeUnmount(() => {
+  removeEventListenerBeforeInstallPrompt()
+  removeEventListenerAppInstalled()
+})
 </script>
 
 <template>
@@ -36,10 +67,10 @@ const installApp = async () => {
       </p>
       <p class="mb-4">Add it to your phone for quick, app-like access!</p>
       <v-btn
-        v-if="deferredPrompt"
+        v-if="isButtonInstallPWAVisible"
         color="primary"
         prepend-icon="mdi-lightning-bolt"
-        @click="installApp"
+        @click="installPWA"
       >
         Install WattStat
       </v-btn>
