@@ -25,3 +25,4 @@ dist-ssr
 client_secret_440600088350-kfjbsoee3sputtfta9uirutsvd0ramtu.apps.googleusercontent.com.json
 .env
 package-lock.json
+!/dev-dist/
