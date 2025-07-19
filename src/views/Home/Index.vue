@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { usePwaInstall } from '@/composables/usePwaInstall'
-import { computed, ComputedRef } from 'vue'
 import { isAndroid, isDesktop, isIOS } from '@/helpers/getOS'
 
-const { canInstall, promptInstall, isPwa, hasNativePrompt } = usePwaInstall()
-
-const iconInstallPWA: ComputedRef<'mdi-download' | 'mdi-lightning-bolt'> =
-  computed(() => (hasNativePrompt ? 'mdi-download' : 'mdi-lightning-bolt'))
-
-const isButtonInstallPWAVisible: ComputedRef<boolean> = computed(
-  () => canInstall && !isPwa,
-)
+const { isPwa } = usePwaInstall()
 </script>
 
 <template>
@@ -23,25 +15,14 @@ const isButtonInstallPWAVisible: ComputedRef<boolean> = computed(
 
     <p class="mb-4">Add it to your phone for quick, app-like access!</p>
 
-    <v-btn
-      v-if="isButtonInstallPWAVisible"
-      color="primary"
-      :prepend-icon="iconInstallPWA"
-      @click="promptInstall"
-    >
-      Install PWA
-    </v-btn>
-
     <v-card v-if="isIOS">
       <v-card-title class="justify-center"> To install on iOS: </v-card-title>
       <v-list>
         <v-list-item>
-          1. Tap the three dots menu (⋮) in the top-right corner.
+          1. Tap the Share button (bottom center: square with ↑).
         </v-list-item>
-        <v-list-item>
-          2. Select “Add to Home screen” or “Install app”.
-        </v-list-item>
-        <v-list-item> 3. Tap Add to confirm. </v-list-item>
+        <v-list-item> 2. Scroll and tap “Add to Home Screen”. </v-list-item>
+        <v-list-item> 3. Tap Add in the top-right corner. </v-list-item>
       </v-list>
     </v-card>
 
@@ -60,7 +41,7 @@ const isButtonInstallPWAVisible: ComputedRef<boolean> = computed(
 
     <v-card v-if="isDesktop">
       <v-card-title class="d-flex align-center">
-        <div>Please Use a Mobile Device</div>
+        Please Use a Mobile Device
       </v-card-title>
       <v-list>
         <v-list-item>
