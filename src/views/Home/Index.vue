@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { usePwaInstall } from '@/composables/usePwaInstall'
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 const { canInstall, promptInstall, isPwa, hasNativePrompt } = usePwaInstall()
-const router = useRouter()
 
 const onInstallPWA = async () => {
   const outcome = await promptInstall()
   console.log(`Install prompt outcome: ${outcome}`)
 }
-
-onMounted(() => {
-  if (isPwa) router.push('/auth')
-})
 </script>
 
 <template>
   <v-container>
     <v-card>
-      <v-chip>v3</v-chip>
+      <v-chip>v4</v-chip>
+      <v-chip>{{ isPwa }}</v-chip>
       <h4 class="text-h4 font-weight-bold mb-4">
         Watt's Up?<br />
         It's WattStat!
