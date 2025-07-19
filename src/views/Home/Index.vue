@@ -15,7 +15,7 @@ const isButtonInstallPWAVisible: ComputedRef<boolean> = computed(
 
 <template>
   <v-container>
-    <v-chip>v5</v-chip>
+    <v-chip>v6</v-chip>
     <h4 class="text-h4 font-weight-bold mb-4">
       Watt's Up?<br />
       It's WattStat!
