@@ -37,7 +37,7 @@ export const usePwaInstall = () => {
     isPwa.value = currentPwa
 
     // Show install prompt if not already running as PWA
-    if (!currentPwa && !localStorage.getItem('pwa-install-dismissed')) {
+    if (!currentPwa) {
       checkPwaRequirements().then((hasRequirements) => {
         if (hasRequirements) {
           canInstall.value = true
@@ -97,21 +97,10 @@ export const usePwaInstall = () => {
         console.warn('Native install prompt failed:', error)
       }
     }
-
-    // Fallback to generic instructions
-    const confirmed = window.confirm(
-      'To install this app:\n\n' +
-        "1. Look for an install icon in your browser's address bar\n" +
-        '2. Or use your browser\'s menu to "Install app" or "Add to Home Screen"\n\n' +
-        'Would you like to dismiss this message?',
-    )
-
-    return confirmed ? 'dismissed' : 'accepted'
   }
 
   // Reset install availability (useful for testing or re-enabling)
   const resetInstallPrompt = () => {
-    localStorage.removeItem('pwa-install-dismissed')
     canInstall.value = false
     hasNativePrompt.value = false
     installPromptEvent.value = null
@@ -130,7 +119,6 @@ export const usePwaInstall = () => {
       hasNativePrompt.value = false
       installPromptEvent.value = null
       isPwa.value = true
-      localStorage.setItem('pwa-install-dismissed', 'true')
     })
 
     // Mark as PWA launched if coming from installed app
