@@ -1,13 +1,11 @@
 import { ref, onMounted, onUnmounted, Ref, ComputedRef, computed } from 'vue'
 
-// Enhanced PWA install composable with native support + stable fallbacks
+// Simplified PWA install composable - PWA detection only
 const installPromptEvent: Ref<any> = ref(null)
-const isPwa: Ref<boolean> = ref(false)
 
 export const usePwaInstall = () => {
   const canInstall: Ref<boolean> = ref(false)
-  const isIos: Ref<boolean> = ref(false)
-  const showInstallBanner: Ref<boolean> = ref(false)
+  const isPwa: Ref<boolean> = ref(false)
   const hasNativePrompt: Ref<boolean> = ref(false)
 
   // Detect if running as PWA using stable APIs
@@ -17,25 +15,13 @@ export const usePwaInstall = () => {
       '(display-mode: standalone)',
     ).matches
 
-    // Check iOS standalone (stable)
-    const isIosStandalone = (window.navigator as any).standalone === true
-
     // Check if launched from home screen (more reliable detection)
     const isFromHomeScreen =
       window.location.search.includes('source=pwa') ||
       sessionStorage.getItem('isPwaLaunched') === 'true'
 
-    return isStandaloneMode || isIosStandalone || isFromHomeScreen
+    return isStandaloneMode || isFromHomeScreen
   })
-
-  // Detect iOS devices
-  const detectIos = (): boolean => {
-    const userAgent = window.navigator.userAgent.toLowerCase()
-    return (
-      /iphone|ipad|ipod/.test(userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    )
-  }
 
   // Handle native beforeinstallprompt event (when available)
   const handleBeforeInstallPrompt = (e: Event) => {
@@ -48,9 +34,6 @@ export const usePwaInstall = () => {
   // Check if PWA is installable using stable methods
   const checkInstallability = () => {
     const currentPwa = checkIsPwa.value
-    const currentIos = detectIos()
-
-    isIos.value = currentIos
     isPwa.value = currentPwa
 
     // Show install prompt if not already running as PWA
@@ -58,8 +41,7 @@ export const usePwaInstall = () => {
       checkPwaRequirements().then((hasRequirements) => {
         if (hasRequirements) {
           canInstall.value = true
-          // Show banner for iOS or when no native prompt is available
-          showInstallBanner.value = currentIos || !hasNativePrompt.value
+          // Show banner when no native prompt is available
         }
       })
     }
@@ -92,7 +74,7 @@ export const usePwaInstall = () => {
     }
   }
 
-  // Enhanced install method - tries native first, falls back to instructions
+  // Simplified install method
   const promptInstall = async () => {
     if (!canInstall.value) return Promise.resolve('dismissed')
 
@@ -108,56 +90,29 @@ export const usePwaInstall = () => {
 
         if (outcome === 'accepted') {
           canInstall.value = false
-          showInstallBanner.value = false
         }
 
         return outcome
       } catch (error) {
-        console.warn(
-          'Native install prompt failed, falling back to instructions:',
-          error,
-        )
-        // Fall through to instruction method
+        console.warn('Native install prompt failed:', error)
       }
     }
 
-    // Fallback to instruction dialogs
-    return new Promise<string>((resolve) => {
-      let confirmed: boolean
+    // Fallback to generic instructions
+    const confirmed = window.confirm(
+      'To install this app:\n\n' +
+        "1. Look for an install icon in your browser's address bar\n" +
+        '2. Or use your browser\'s menu to "Install app" or "Add to Home Screen"\n\n' +
+        'Would you like to dismiss this message?',
+    )
 
-      // For iOS, show specific instructions
-      if (isIos.value) {
-        confirmed = window.confirm(
-          'To install this app on your iOS device:\n\n' +
-            '1. Tap the Share button in Safari\n' +
-            '2. Select "Add to Home Screen"\n' +
-            '3. Tap "Add" to confirm\n\n' +
-            'Would you like to continue?',
-        )
-        resolve(confirmed ? 'accepted' : 'dismissed')
-      } else {
-        // For other browsers, show generic instructions
-        confirmed = window.confirm(
-          'To install this app:\n\n' +
-            "1. Look for an install icon in your browser's address bar\n" +
-            '2. Or use your browser\'s menu to "Install app" or "Add to Home Screen"\n\n' +
-            'Would you like to dismiss this message?',
-        )
-        resolve(confirmed ? 'dismissed' : 'accepted')
-      }
-
-      // Only hide the banner if user explicitly dismissed it (non-iOS confirmed case)
-      if (!isIos.value && confirmed) {
-        showInstallBanner.value = false
-      }
-    })
+    return confirmed ? 'dismissed' : 'accepted'
   }
 
   // Reset install availability (useful for testing or re-enabling)
   const resetInstallPrompt = () => {
     localStorage.removeItem('pwa-install-dismissed')
     canInstall.value = false
-    showInstallBanner.value = false
     hasNativePrompt.value = false
     installPromptEvent.value = null
     checkInstallability()
@@ -172,7 +127,6 @@ export const usePwaInstall = () => {
     // Listen for app installation
     window.addEventListener('appinstalled', () => {
       canInstall.value = false
-      showInstallBanner.value = false
       hasNativePrompt.value = false
       installPromptEvent.value = null
       isPwa.value = true
@@ -193,8 +147,6 @@ export const usePwaInstall = () => {
     canInstall,
     promptInstall,
     isPwa,
-    isIos,
-    showInstallBanner,
     hasNativePrompt,
     resetInstallPrompt,
   }
