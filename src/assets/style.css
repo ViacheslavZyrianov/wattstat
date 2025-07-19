@@ -6,6 +6,12 @@ html {
     overscroll-behavior: none
 }
 
+body {
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: red; /* or your PWA background */
+}
+
+
 .v-bottom-navigation__content {
     justify-content: space-around;
 }
