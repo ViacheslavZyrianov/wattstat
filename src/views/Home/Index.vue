@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { usePwaInstall } from '@/composables/usePwaInstall'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const {
-  canInstall,
-  promptInstall,
-  isPwa,
-  isIos,
-  showInstallBanner,
-  hasNativePrompt,
-} = usePwaInstall()
+const { canInstall, promptInstall, isPwa, hasNativePrompt } = usePwaInstall()
+const router = useRouter()
 
 const onInstallPWA = async () => {
   const outcome = await promptInstall()
   console.log(`Install prompt outcome: ${outcome}`)
 }
+
+onMounted(() => {
+  if (isPwa) router.push('/auth')
+})
 </script>
 
 <template>
   <v-container>
     <v-card>
-      <v-chip>v2</v-chip>
+      <v-chip>v3</v-chip>
       <h4 class="text-h4 font-weight-bold mb-4">
         Watt's Up?<br />
         It's WattStat!
@@ -39,48 +39,6 @@ const onInstallPWA = async () => {
       >
         Install PWA
       </v-btn>
-
-      <!-- Show a banner for better visibility if recommended -->
-      <!--      <v-alert-->
-      <!--        v-if="showInstallBanner && canInstall && !isPwa"-->
-      <!--        type="info"-->
-      <!--        variant="tonal"-->
-      <!--        class="mt-4"-->
-      <!--        closable-->
-      <!--        @click:close="showInstallBanner = false"-->
-      <!--      >-->
-      <!--        <template #prepend>-->
-      <!--          <v-icon>{{-->
-      <!--            hasNativePrompt ? 'mdi-download' : 'mdi-lightning-bolt'-->
-      <!--          }}</v-icon>-->
-      <!--        </template>-->
-      <!--        <div class="d-flex align-center justify-space-between">-->
-      <!--          <div>-->
-      <!--            <strong>Install WattStat</strong>-->
-      <!--            <br />-->
-      <!--            <small>-->
-      <!--              {{-->
-      <!--                hasNativePrompt-->
-      <!--                  ? 'Click to install directly from your browser'-->
-      <!--                  : isIos-->
-      <!--                    ? 'Add to your home screen for easy access'-->
-      <!--                    : 'Get the full app experience'-->
-      <!--              }}-->
-      <!--            </small>-->
-      <!--          </div>-->
-      <!--          <v-btn size="small" variant="outlined" @click="onInstallPWA">-->
-      <!--            Install PWA-->
-      <!--          </v-btn>-->
-      <!--        </div>-->
-      <!--      </v-alert>-->
-
-      <!-- Show success message when already installed as PWA -->
-      <v-alert v-if="isPwa" type="success" variant="tonal" class="mt-4">
-        <template #prepend>
-          <v-icon>mdi-check-circle</v-icon>
-        </template>
-        Great! You're using WattStat as an installed app.
-      </v-alert>
     </v-card>
   </v-container>
 
